@@ -33,7 +33,7 @@ class RabbitMQClient(PubSubClient):
 
     def __init__(
         self,
-        uri: str ="amqp://guest:guest@localhost/",
+        uri: str = "amqp://guest:guest@localhost/",
         virtualhost: str = "/",
         encoding: str = "utf-8",
         content_type: str = "application/json",
@@ -58,6 +58,7 @@ class RabbitMQClient(PubSubClient):
 
             logger.info(f'Consuming queue: "{queue.name}"')
             await rmq_queue.consume(callback)
+            await asyncio.Future()
 
     @staticmethod
     async def _get_message(queue: AbstractRobustQueue, timeout: int = 1) -> Optional[AbstractIncomingMessage]:
@@ -145,7 +146,7 @@ class RabbitMQClient(PubSubClient):
         async with self.get_channel() as channel:
             self.__queues[queue.name] = await self._get_queue(queue, channel, declare)
             async with self.__queues_lock:
-                return self.__queues_lock[queue.name]
+                return self.__queues[queue.name]
 
     async def close(self):
         if self.is_open:

@@ -72,7 +72,7 @@ class Sakura:
                 tasks.append(loop.create_task(task))
 
         self.install_signal_handlers()
-        await asyncio.gather(*tasks)
+        await asyncio.gather(*tasks, loop=loop)
 
     @property
     def http(self):

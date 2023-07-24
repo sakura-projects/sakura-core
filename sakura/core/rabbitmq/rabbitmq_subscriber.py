@@ -1,11 +1,11 @@
 import asyncio
-import functools
 import logging
 from typing import Optional, Callable
 
 from aio_pika.abc import AbstractIncomingMessage
 
 from sakura.core.pubsub import Subscriber
+from sakura.core.pubsub.client import PubSubClient
 from sakura.core.pubsub.types import PubSubRequest, PubSubApp
 from sakura.core.rabbitmq import RabbitMQClient
 from sakura.core.rabbitmq.types import Queue, PublishAddress

@@ -1,3 +1,9 @@
+config:
+  queue:
+    name: hello
+  exchange:
+    name: main
+
 transporters:
   HTTPTransporter:
     client:
@@ -6,8 +12,14 @@ transporters:
         port: 8000
         title: basic_service
 
+  PubSubTransporter:
+    clients:
+      first_client:
+        type: RabbitMQClient
+        params:
+          uri: amqp://guest:guest@localhost
+
 providers: {}
-config: {}
 
 loggers:
   Loguru:
