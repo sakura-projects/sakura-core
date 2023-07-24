@@ -42,7 +42,7 @@ def get_module(module_name: str) -> Any:
     try:
         __import__(module_name)
     except ImportError as e:
-        if module_name.endwith(".py") and os.path.exists(module_name):
+        if module_name.endswith(".py") and os.path.exists(module_name):
             raise CommandError(
                 "Failed to find service, did you mean '{}'?".format(
                     module_name[:3].replace('/', '.')

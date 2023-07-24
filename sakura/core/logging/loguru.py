@@ -18,7 +18,7 @@ class LevelConfig(SakuraBaseSettings):
     icon: str
 
 
-class InteceptHandler(logging.Handler):
+class InterceptHandler(logging.Handler):
     """
     Default handler from examples in loguru documentation.
     See https://loguru.readthedocs.io/en/stable/overview.html#entirely-compatible-with-standard-logging
@@ -66,4 +66,4 @@ class Loguru(Logger):
         logger.configure(**config)
 
     def get_basic_config(self) -> dict:
-        return {"handlers": [InteceptHandler()], "level": logging.INFO}
+        return {"handlers": [InterceptHandler()], "level": logging.INFO}

@@ -122,7 +122,7 @@ class RabbitMQClient(PubSubClient):
             exchange = await self._get_exchange(exchange, channel, declare)
             await exchange.publish(message, routing_key)
 
-    async def create_message_from_payload(self, payload: Any, delivery_mode: DeliveryMode = DeliveryMode.PERSITENT):
+    async def create_message_from_payload(self, payload: Any, delivery_mode: DeliveryMode = DeliveryMode.PERSISTENT):
         payload = json.dumps(jsonable_encoder(payload)).encode(self.encoding)
         message = aio_pika.Message(
             payload,

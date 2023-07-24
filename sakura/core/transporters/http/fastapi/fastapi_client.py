@@ -132,7 +132,6 @@ class FastAPI(fastapi.FastAPI, HTTPClient):
         async def swagger_ui_redirect():
             return get_swagger_ui_oauth2_redirect_html()
 
-
         @self.get("/redoc", include_in_schema=False)
         async def redoc_html():
             return get_redoc_html(
@@ -156,6 +155,7 @@ class FastAPI(fastapi.FastAPI, HTTPClient):
         logging.getLogger("uvicorn").removeHandler(logging.getLogger("uvicorn").handlers[0])
         logging.getLogger("uvicorn.access").removeHandler(logging.getLogger("uvicorn.access").handlers[0])
 
+        logging.getLogger("uvicorn").addHandler(InterceptHandler())
         logging.getLogger("uvicorn.access").addHandler(InterceptHandler())
 
         # Remove uvicorn signal handling

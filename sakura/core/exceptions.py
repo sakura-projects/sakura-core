@@ -9,10 +9,6 @@ class PubSubTransporterNotInitialized(Exception):
     pass
 
 
-class CronTransporterNotInitialized(Exception):
-    pass
-
-
 class MissingParameterException(Exception):
     pass
 

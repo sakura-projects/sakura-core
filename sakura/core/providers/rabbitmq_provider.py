@@ -15,7 +15,7 @@ class RabbitMQProvider(Provider):
     class Settings(SakuraBaseSettings):
         client: ClientSettings
 
-    def __init__(self):
+    def __init__(self, settings: Settings):
         self.settings = settings
         self.__client: RabbitMQClient = client_factory(
             self.settings.client.params,

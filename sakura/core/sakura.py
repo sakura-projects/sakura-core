@@ -9,12 +9,10 @@ from typing import Optional, Any, Callable
 
 from asyncer import asyncify
 
-from sakura.core.exceptions import HTTPTransporterNotInitialized, PubSubTransporterNotInitialized, \
-    CronTransporterNotInitialized
+from sakura.core.exceptions import HTTPTransporterNotInitialized, PubSubTransporterNotInitialized
 from sakura.core.logging import Logger
 from sakura.core.providers import Provider
 from sakura.core.transporters.transporter import Transporter
-from sakura.core.transporters.cron.cron_transporter import CronTransporter
 from sakura.core.transporters.http.http_transporter import HTTPTransporter
 from sakura.core.transporters.pubsub.pubsub_transporter import PubSubTransporter
 from sakura.core.utils import merge_dicts
@@ -55,7 +53,7 @@ class Sakura:
         for transporter in self._transporters:
             await transporter.setup()
 
-    async def setup_providers():
+    async def setup_providers(self):
         for provider in self._providers.values():
             await provider.setup()
 
@@ -71,10 +69,10 @@ class Sakura:
             transporter_tasks = await transporter.generate_tasks()
 
             for task in transporter_tasks:
-                task.append(loop.create_task(task))
+                tasks.append(loop.create_task(task))
 
         self.install_signal_handlers()
-        await asyncio.gather(*tasks, loop=loop)
+        await asyncio.gather(*tasks)
 
     @property
     def http(self):
@@ -91,12 +89,6 @@ class Sakura:
                 return transporter
 
         raise PubSubTransporterNotInitialized()
-
-    @property
-    def cron(self):
-        cron = CronTransporter()
-        self._transporters.append(cron)
-        return cron
 
     def once(self, orig_func):
         func = orig_func

@@ -55,6 +55,6 @@ def dynamic_self_func(func, _instance=None):
 
     decorator = async_decorator if inspect.iscoroutinefunction(func) else sync_decorator
 
-    params = [param for param in old_signature.parameters.values() if param.name != self]
+    params = [param for param in old_signature.parameters.values() if param.name != 'self']
     decorator.__signature__ = old_signature.replace(parameters=params)
     return decorator

@@ -44,7 +44,7 @@ class Microservice(Sakura):
         await self.setup()
 
         for func in self._once_functions:
-            await dynamic_self_func(func, _instance=self._instance)
+            await dynamic_self_func(func, _instance=self._instance)()
 
         await super(Microservice, self).start()
         for provider in self._providers.values():

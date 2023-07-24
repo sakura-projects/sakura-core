@@ -39,7 +39,3 @@ class MockMicroservice(sakura.core.Microservice):
     @property
     def pubsub(self):
         return MockTransporter()
-
-    @property
-    def cron(self):
-        return MockTransporter()

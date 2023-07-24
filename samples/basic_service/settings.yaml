@@ -1,4 +1,15 @@
-transporters: {}
+transporters:
+  HTTPTransporter:
+    client:
+      type: FastAPI
+      params:
+        port: 8000
+        title: basic_service
+
 providers: {}
-loggers: {}
 config: {}
+
+loggers:
+  Loguru:
+    serialize: False
+    handlers: []
