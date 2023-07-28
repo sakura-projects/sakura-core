@@ -1,33 +1,22 @@
 import logging
+from typing import Callable
 
 from fastapi import FastAPI
 
-from sakura.core.rabbitmq.types import Exchange, Queue
-from sakura.core.rabbitmq.rabbitmq_subscriber import RabbitMQSubscriber
 from sakura.core.sakura import Microservice
-from sakura.core.transporters.pubsub import PubSubTransporter
 
 
-microservice = Microservice()
+logger = logging.getLogger(__name__)
 
 
-@microservice()
-class Service:
-    http: FastAPI = microservice.http
-    pubsub: PubSubTransporter = microservice.pubusub
-    once = microservice.once
-    config = microservice.settings.config
+class Service(metaclass=Microservice, settings_files=['samples/basic_service/settings.yaml']):
+    http: FastAPI
+    once: Callable
+    config: dict
 
-    exchange = Exchange(name=config['exchange']['name'])
-    queue = Queue(name=config['queue']['name'], exchange=exchange, routing_key='route_a')
-
-    subscriber = RabbitMQSubscriber(client_id='first_client', queue=queue, declare=True)
-
-    logger = logging.getLogger(__name__)
-
-    @once
-    async def run(self):
-        self.logger.info('Started service')
+    # @once
+    # async def run(self):
+    #     logger.info('Started service')
 
     @http.get('/')
     async def root(self):

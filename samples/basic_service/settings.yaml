@@ -4,13 +4,7 @@ config:
   exchange:
     name: main
 
-transporters:
-  PubSubTransporter:
-    clients:
-      first_client:
-        type: RabbitMQClient
-        params:
-          uri: amqp://guest:guest@localhost
+transporters: {}
 
 providers:
   http:

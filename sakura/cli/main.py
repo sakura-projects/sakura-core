@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import os
 import sys
@@ -9,23 +8,10 @@ from dynaconf import Dynaconf
 
 from sakura.cli.asyncio_utils import initialize_loop
 from sakura.cli.utils import initialize_service
-from sakura.core.sakura import Microservice
-
-from sakura.core.settings import Settings
 
 sys.path.append(os.getcwd())
 
 app = typer.Typer()
-
-
-async def __run(settings: Dynaconf, module_name: str):
-    Microservice.settings = Settings.from_dynaconf(settings)
-    microservice = Microservice()
-
-    await microservice.setup()
-    initialize_service(module_name)
-
-    await microservice.start()
 
 
 @app.command()
@@ -36,6 +22,7 @@ def run(
     disable_uvloop: Optional[bool] = typer.Option(False, '--disable-uvloop'),
     debug: Optional[bool] = typer.Option(False, '--debug'),
 ):
+    initialize_service(module_name)
     use_uvloop = not disable_uvloop
 
     if debug:
@@ -55,8 +42,6 @@ def run(
         settings_files=settings_path,
         load_dotenv=load_dotenv,
     )
-
-    asyncio.run(__run(settings=settings, module_name=module_name), debug=debug)
 
 
 @app.command(name='info')

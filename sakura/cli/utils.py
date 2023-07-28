@@ -6,7 +6,6 @@ from types import ModuleType
 from typing import Any
 
 from sakura.cli.exceptions import CommandError, UndefinedMicroserviceException, MultipleMicroservicesException
-from sakura.core.sakura import Microservice
 
 
 def get_classes(module: ModuleType) -> list[type]:
@@ -21,10 +20,6 @@ def get_classes(module: ModuleType) -> list[type]:
 
 MISSING_MODULE_TEMPLATE = "^No module named '{}'?$"
 SAKURA_SERVICE = "sakura_service"
-
-
-def is_microservice(obj: object):
-    return isinstance(obj, Microservice)
 
 
 def is_sakura_service(cls: type):
@@ -79,24 +74,4 @@ def initialize_service(module_name: str):
     service_type()
 
     return service_type
-
-
-def get_microservice(module_name: str) -> Microservice:
-    module = get_module(module_name)
-    microservices = [microservice for _, microservice in inspect.getmembers(module, is_microservice)]
-
-    if not microservices:
-        raise CommandError(
-            "Failed to find anything that looks like a microservice in module "
-            "{!r}".format(module_name)
-        )
-
-    if len(microservices) == 0:
-        raise UndefinedMicroserviceException()
-
-    if len(microservices) > 1:
-        raise MultipleMicroservicesException()
-
-    return microservices[0]
-
 
