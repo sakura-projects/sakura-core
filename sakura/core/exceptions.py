@@ -42,3 +42,6 @@ class ClientNotFoundException(Exception):
 class DecodeError(Exception):
     pass
 
+
+class PropertyDoesntExist(Exception):
+    pass

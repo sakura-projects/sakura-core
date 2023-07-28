@@ -1,3 +1,4 @@
+from __future__ import annotations
 import asyncio
 import functools
 import logging
@@ -5,22 +6,27 @@ import signal
 import threading
 
 from types import FrameType
-from typing import Optional, Any, Callable
+from typing import Optional, Callable, Type, TypeVar, Any
 
 from asyncer import asyncify
 
-from sakura.core.exceptions import HTTPTransporterNotInitialized, PubSubTransporterNotInitialized
+from sakura.core.exceptions import PubSubTransporterNotInitialized, PropertyDoesntExist
 from sakura.core.logging import Logger
 from sakura.core.providers import Provider
+from sakura.core.settings import Settings
 from sakura.core.transporters.transporter import Transporter
-from sakura.core.transporters.http.http_transporter import HTTPTransporter
 from sakura.core.transporters.pubsub.pubsub_transporter import PubSubTransporter
 from sakura.core.utils import merge_dicts
+from sakura.core.utils.decorators import dynamic_self_func
+from sakura.core.utils.factory import list_factory, dict_factory
 
 HANDLED_SIGNALS = (
     signal.SIGINT,
     signal.SIGTERM,
 )
+
+
+T = TypeVar("T")
 
 
 class Sakura:
@@ -38,6 +44,7 @@ class Sakura:
         self._transporters = transporters
         self._providers = providers
         self.__loggers = loggers
+        self.tasks: list[asyncio.Task] = []
         self.should_exit = False
         self.force_exit = False
         self.init_logging()
@@ -54,33 +61,33 @@ class Sakura:
             await transporter.setup()
 
     async def setup_providers(self):
-        for provider in self._providers.values():
-            await provider.setup()
+        for name, provider in self._providers.items():
+            self.tasks.append(await provider.setup())
+            setattr(self, name, provider.get_dependency())
 
     async def setup(self):
-        await self.setup_transporters()
         await self.setup_providers()
 
     async def start(self):
-        tasks: list = []
+        for func in self._once_functions:
+            await dynamic_self_func(func)()
+
         loop = asyncio.get_running_loop()
 
         for transporter in self._transporters:
             transporter_tasks = await transporter.generate_tasks()
 
             for task in transporter_tasks:
-                tasks.append(loop.create_task(task))
+                self.tasks.append(loop.create_task(task))
 
         self.install_signal_handlers()
-        await asyncio.gather(*tasks, loop=loop)
+        await asyncio.gather(*self.tasks, loop=loop)
 
-    @property
-    def http(self):
+        for provider in self._providers.values():
+            await provider.teardown()
+
         for transporter in self._transporters:
-            if isinstance(transporter, HTTPTransporter):
-                return transporter.http
-
-        raise HTTPTransporterNotInitialized()
+            await transporter.teardown()
 
     @property
     def pubusub(self):
@@ -90,7 +97,7 @@ class Sakura:
 
         raise PubSubTransporterNotInitialized()
 
-    def once(self, orig_func):
+    def once(self, orig_func: Callable):
         func = orig_func
         if not asyncio.iscoroutinefunction(func):
             func = asyncify(func)
@@ -103,12 +110,9 @@ class Sakura:
     def loggers(self):
         return self.__loggers
 
-    async def providers(self, provider_name: str) -> Any:
-        return await self._providers[provider_name].get_dependency()
-
     def install_signal_handlers(self) -> None:
         if threading.current_thread() is not threading.main_thread():
-            # SIgnals can only be listened to from the main thread.
+            # Signals can only be listened to from the main thread.
             return
 
         loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
@@ -129,3 +133,44 @@ class Sakura:
         
         for transporter in self._transporters:
             transporter.handle_exit(sig, frame)
+
+
+class Microservice(Sakura):
+    settings: Settings
+    _instance: Any = None
+    ___microservice_instance: Microservice = None
+
+    def __new__(cls, *args, **kwargs):
+        if not cls.___microservice_instance:
+            cls.___microservice_instance = super().__new__(cls)
+        return cls.___microservice_instance
+
+    def __init__(self):
+        transporters = list_factory(self.settings.transporters, Transporter)
+        providers = dict_factory(self.settings.providers, Provider)
+        loggers = list_factory(self.settings.loggers, Logger)
+        super(Microservice, self).__init__(transporters, providers, loggers)
+
+    def __call__(self) -> Callable[[Type[T]], Type[T]]:
+        def decorator(class_: Type[T]) -> Type[T]:
+            orig_new = class_.__new__
+
+            def _new_(cls, *args, **kwargs):
+                if self._instance is None:
+                    instance = orig_new(cls, *args, **kwargs)
+                    self._instance = instance
+                    class_._instance = instance
+
+                return self._instance
+
+            class_.__new__ = _new_
+
+            class_.sakura_service = True
+            return class_
+
+        return decorator
+
+    def __getattr__(self, item: str):
+        logging.getLogger(__name__).error(f'Failed getting property: {{{item}}}, '
+                                          f'make sure you have a provider named {{{item}}}')
+        raise PropertyDoesntExist()

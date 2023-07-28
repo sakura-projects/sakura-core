@@ -1,11 +1,12 @@
 import logging
 
-from sakura.core.microservice import Microservice
-from sakura.core.transporters.http.fastapi import FastAPI
+from fastapi import FastAPI
 
 from sakura.core.rabbitmq.types import Exchange, Queue
 from sakura.core.rabbitmq.rabbitmq_subscriber import RabbitMQSubscriber
+from sakura.core.sakura import Microservice
 from sakura.core.transporters.pubsub import PubSubTransporter
+
 
 microservice = Microservice()
 
@@ -31,7 +32,3 @@ class Service:
     @http.get('/')
     async def root(self):
         return {'foo': 'bar'}
-
-    @pubsub.subscribe(subscriber=subscriber)
-    async def read_from_queue(self, id: int, name: str):
-        self.logger.info(f'{id} hello: {name}')

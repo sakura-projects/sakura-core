@@ -6,7 +6,7 @@ from types import ModuleType
 from typing import Any
 
 from sakura.cli.exceptions import CommandError, UndefinedMicroserviceException, MultipleMicroservicesException
-from sakura.core import Microservice
+from sakura.core.sakura import Microservice
 
 
 def get_classes(module: ModuleType) -> list[type]:
@@ -75,7 +75,10 @@ def initialize_service(module_name: str):
     if len(services) > 1:
         raise MultipleMicroservicesException()
 
-    services[0]()
+    service_type = services[0]
+    service_type()
+
+    return service_type
 
 
 def get_microservice(module_name: str) -> Microservice:

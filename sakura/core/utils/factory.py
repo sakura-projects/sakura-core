@@ -44,7 +44,7 @@ def dict_factory(settings: dict, parent_type: type) -> dict:
         settings = inheritors_dict[value["type"]].Settings.from_dynaconf(value["params"])
 
         provider = inheritors_dict[value["type"]](settings)
-        objects['name'] = provider
+        objects[name] = provider
 
     return objects
 

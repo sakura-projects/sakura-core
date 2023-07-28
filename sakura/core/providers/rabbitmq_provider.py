@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any
 
 from sakura.core.providers import Provider
@@ -25,11 +26,11 @@ class RabbitMQProvider(Provider):
 
         self.is_open = False
 
-    async def setup(self):
-        await self.__client.setup()
+    async def setup(self) -> asyncio.Task:
+        return asyncio.create_task(self.__client.setup())
 
     async def teardown(self):
         return self.__client.close()
 
-    async def get_dependency(self) -> Any:
+    def get_dependency(self) -> Any:
         return self.__client

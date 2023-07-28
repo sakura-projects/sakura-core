@@ -8,14 +8,24 @@ import typer
 from dynaconf import Dynaconf
 
 from sakura.cli.asyncio_utils import initialize_loop
-from sakura.cli.utils import get_microservice, initialize_service
+from sakura.cli.utils import initialize_service
+from sakura.core.sakura import Microservice
 
-from sakura.core import Microservice
 from sakura.core.settings import Settings
 
 sys.path.append(os.getcwd())
 
 app = typer.Typer()
+
+
+async def __run(settings: Dynaconf, module_name: str):
+    Microservice.settings = Settings.from_dynaconf(settings)
+    microservice = Microservice()
+
+    await microservice.setup()
+    initialize_service(module_name)
+
+    await microservice.start()
 
 
 @app.command()
@@ -28,29 +38,25 @@ def run(
 ):
     use_uvloop = not disable_uvloop
 
+    if debug:
+        logging.getLogger('sakura').setLevel(logging.DEBUG)
+
     if use_uvloop:
         try:
             import uvloop
         except ImportError:
-            logging.getLogger('sakura').error('Please install uvloop or consider runing with the --disable-uvloop flag')
+            logging.getLogger('sakura').error('Please install uvloop or consider running with the --disable-uvloop flag')
             return
 
     initialize_loop(use_uvloop=use_uvloop)
 
-    new_settings = Dynaconf(
+    settings = Dynaconf(
         envvar_prefix="SAKURA",
         settings_files=settings_path,
         load_dotenv=load_dotenv,
     )
 
-    Microservice.settings = Settings.from_dynaconf(new_settings)
-    microservice = get_microservice(module_name)
-    initialize_service(module_name)
-
-    if debug:
-        logging.getLogger('sakura').setLevel(logging.DEBUG)
-
-    asyncio.run(microservice.start(), debug=debug)
+    asyncio.run(__run(settings=settings, module_name=module_name), debug=debug)
 
 
 @app.command(name='info')

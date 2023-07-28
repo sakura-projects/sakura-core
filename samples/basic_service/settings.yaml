@@ -5,13 +5,6 @@ config:
     name: main
 
 transporters:
-  HTTPTransporter:
-    client:
-      type: FastAPI
-      params:
-        port: 8000
-        title: basic_service
-
   PubSubTransporter:
     clients:
       first_client:
@@ -19,7 +12,12 @@ transporters:
         params:
           uri: amqp://guest:guest@localhost
 
-providers: {}
+providers:
+  http:
+    type: FastAPIProvider
+    params:
+      port: 8000
+      title: basic_service
 
 loggers:
   Loguru:
