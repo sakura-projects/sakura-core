@@ -1,6 +1,8 @@
 name: CI on Specific Path Changes
 on:
   push:
+    paths:
+      - sakura/providers/fastapi/**
     branches:
       - configuring-ci
 
