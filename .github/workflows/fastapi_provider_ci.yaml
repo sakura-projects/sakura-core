@@ -1,12 +1,12 @@
 name: CI for sakura-fastapi-provider
 
 on:
-  push:
+  pull_request:
+    branches:
+      - main
     paths:
       - sakura/sakura-fastapi-provider/**
       - .github/workflows/fastapi_provider_ci.yaml
-    branches:
-      - configuring-ci
 
 jobs:
   test:

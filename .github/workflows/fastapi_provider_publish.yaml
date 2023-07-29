@@ -5,8 +5,8 @@ on:
     paths:
       - sakura-fastapi-provider/**
       - .github/workflows/fastapi_provider_publish.yaml
-    branches:
-      - configuring-ci
+    tags:
+      - 'v[0-9]+\.[0-9]+\.[0-9]+\-fastapi'
 
 jobs:
   publish:
