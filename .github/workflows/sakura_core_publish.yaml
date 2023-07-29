@@ -1,4 +1,4 @@
-name: CI for sakura-fastapi-provider
+name: Publish workflow for sakura-core
 
 on:
   push:
