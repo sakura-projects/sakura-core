@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - sakura/providers/fastapi/**
+      - .github/workflows/fastapi/**
     branches:
       - configuring-ci
 
