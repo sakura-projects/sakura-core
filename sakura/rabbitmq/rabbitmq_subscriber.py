@@ -44,7 +44,7 @@ class RabbitMQSubscriber(Subscriber):
                 callback,
                 declare=self.declare,
                 prefetch_count=self.prefetch_count,
-            )
+            ),
         )
 
     async def main_loop(self, client: RabbitMQClient, app: PubSubApp, func: Callable):
@@ -54,7 +54,7 @@ class RabbitMQSubscriber(Subscriber):
                 if isinstance(task_exception, Exception):
                     logger.error(
                         f"Error in RabbitMQ: {type(task_exception).__name__}: {task_exception}. "
-                        f"(Client: {self.client_id}, Queue: {self.queue.name})"
+                        f"(Client: {self.client_id}, Queue: {self.queue.name})",
                     )
 
                 logger.info("Attempting RabbitMQ reconnect in 5 seconds...")
@@ -82,8 +82,8 @@ class RabbitMQSubscriber(Subscriber):
                 extra={
                     "queue": self.queue.name,
                     "exchange": msg.exchange,
-                    "routing_key": msg.routing_key
-                }
+                    "routing_key": msg.routing_key,
+                },
             )
 
             res = await app(req, func)
