@@ -60,20 +60,20 @@ class Sakura:
         for transporter in self.__transporters:
             await transporter.setup()
 
-    async def setup_providers(self):
+    def setup_providers(self):
         for name, provider in self.__providers.items():
-            self.__tasks.append(await provider.setup())
+            self.__tasks.append(provider.setup())
             setattr(self, name, provider.get_dependency())
 
-    async def setup(self):
-        await self.setup_providers()
+    def setup(self):
+        self.setup_providers()
 
     async def start(self):
         # for func in self._once_functions:
         #     await dynamic_self_func(func)()
 
         self.install_signal_handlers()
-        await asyncio.gather(*self.__tasks)
+        await asyncio.gather(*[asyncio.create_task(task) for task in self.__tasks])
 
         for provider in self.__providers.values():
             await provider.teardown()
@@ -181,7 +181,7 @@ class Microservice(type):
         mcs.__sakura_service = Sakura(transporters=transporters, providers=providers, loggers=loggers)
         sakura = mcs.__sakura_service
 
-        asyncio.run(sakura.setup())
+        sakura.setup()
 
         return {
             '__sakura_service': sakura,

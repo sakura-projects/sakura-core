@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import signal
+import typing
 from typing import Optional, Any
 
 import fastapi
@@ -29,15 +30,12 @@ class FastAPIProvider(Provider):
             **settings.extra,
         )
 
-    async def setup(self) -> asyncio.Task:
-        loop = asyncio.get_running_loop()
-
+    def setup(self) -> typing.Coroutine:
         # noinspection PyTypeChecker
         config = Config(
             self.app,
             host='0.0.0.0',
             port=self.settings.port,
-            loop=loop,
         )
 
         self.server = Server(config=config)
@@ -50,7 +48,7 @@ class FastAPIProvider(Provider):
         # Remove uvicorn signal handling
         uvicorn.server.HANDLED_SIGNALS = tuple()
 
-        return asyncio.create_task(self.server.serve())
+        return self.server.serve()
 
     async def teardown(self):
         self.server.handle_exit(sig=signal.SIGINT, frame=None)

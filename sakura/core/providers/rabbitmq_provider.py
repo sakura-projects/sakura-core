@@ -1,4 +1,5 @@
 import asyncio
+import typing
 from typing import Any
 
 from sakura.core.providers import Provider
@@ -26,8 +27,8 @@ class RabbitMQProvider(Provider):
 
         self.is_open = False
 
-    async def setup(self) -> asyncio.Task:
-        return asyncio.create_task(self.__client.setup())
+    def setup(self) -> typing.Coroutine:
+        return self.__client.setup()
 
     async def teardown(self):
         return self.__client.close()
