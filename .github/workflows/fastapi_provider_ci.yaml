@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - sakura/sakura-fastapi-provider/**
+      - sakura-fastapi-provider/**
       - .github/workflows/fastapi_provider_ci.yaml
 
 jobs:
@@ -28,7 +28,9 @@ jobs:
         curl -sSL https://install.python-poetry.org | python -
 
     - name: Install project dependencies with Poetry
+      working-directory: ./sakura-fastapi-provider
       run: poetry install --no-root
 
     - name: Run pytest
+      working-directory: ./sakura-fastapi-provider
       run: poetry run pytest -rA
