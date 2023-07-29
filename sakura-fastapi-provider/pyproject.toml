@@ -3,16 +3,17 @@ name = "sakura-fastapi-provider"
 version = "0.1.0"
 description = ""
 authors = []
-packages = [{include = "sakura"}]
+packages = [{ include = "sakura" }]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+sakura-core = "^0.1.1"
 uvicorn = "^0.23.1"
 fastapi = "0.78.0"
-sakura-core = "^0.1.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
+pre-commit = "^3.3.3"
 
 [build-system]
 requires = ["poetry-core"]

@@ -3,7 +3,7 @@ from typing import Callable
 
 from fastapi import FastAPI
 
-from sakura import Microservice
+from sakura.microservice import Microservice
 
 logger = logging.getLogger(__name__)
 
