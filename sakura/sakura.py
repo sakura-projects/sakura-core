@@ -4,8 +4,7 @@ import logging
 import signal
 import threading
 import typing
-
-from typing import Optional, Callable
+from typing import Callable, Optional
 
 from asyncer import asyncify
 

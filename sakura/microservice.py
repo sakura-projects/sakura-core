@@ -1,6 +1,5 @@
-import inspect
 import asyncio
-
+import inspect
 from typing import Optional
 
 from dynaconf import Dynaconf
@@ -10,7 +9,7 @@ from sakura.logging import Logger
 from sakura.providers import Provider
 from sakura.settings import Settings
 from sakura.utils.decorators import DynamicSelfFunc
-from sakura.utils.factory import list_factory, dict_factory
+from sakura.utils.factory import dict_factory, list_factory
 
 
 class Microservice(type):
@@ -58,7 +57,7 @@ class Microservice(type):
 
     def __new__(mcs, name, bases, attrs, **kwargs):
         if not mcs._instance:
-            mcs._instance = super(Microservice, mcs).__new__(mcs, name, bases, attrs)
+            mcs._instance = super().__new__(mcs, name, bases, attrs)
             DynamicSelfFunc._instance = mcs._instance
 
         asyncio.run(mcs.__sakura_service.start())

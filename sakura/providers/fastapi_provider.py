@@ -2,16 +2,16 @@ import functools
 import logging
 import signal
 import typing
-from typing import Optional, Any
+from typing import Any, Optional
 
 import fastapi
 import pydantic
 import uvicorn
 from uvicorn import Config, Server
 
+from sakura.logging.loguru import InterceptHandler
 from sakura.providers import Provider
 from sakura.settings import SakuraBaseSettings
-from sakura.logging.loguru import InterceptHandler
 from sakura.utils.decorators import DynamicSelfFunc
 
 

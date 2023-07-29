@@ -1,6 +1,6 @@
 import functools
 import inspect
-from typing import Callable, Any
+from typing import Any, Callable
 
 
 def get_class_that_defined_method(method):

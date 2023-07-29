@@ -1,8 +1,7 @@
 from dynaconf import Dynaconf
 
 import sakura
-from sakura.providers import Provider
-from sakura.settings import Settings, SakuraBaseSettings
+from sakura.settings import Settings
 
 
 class MockTransporter:
@@ -30,7 +29,7 @@ class MockMicroservice(sakura.Microservice):
             load_dotenv=True,
         )
         self.settings = Settings.from_dynaconf(new_settings)
-        super(MockMicroservice, self).__init__()
+        super().__init__()
 
     @property
     def http(self):

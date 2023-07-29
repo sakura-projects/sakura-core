@@ -1,14 +1,14 @@
 import asyncio
 import logging
-from typing import Optional, Callable
+from typing import Callable, Optional
 
 from aio_pika.abc import AbstractIncomingMessage
 
 from sakura.pubsub import Subscriber
-from sakura.rabbitmq import RabbitMQClient
-from sakura.rabbitmq.types import Queue, PublishAddress
 from sakura.pubsub.client import PubSubClient
-from sakura.pubsub.types import PubSubRequest, PubSubApp
+from sakura.pubsub.types import PubSubApp, PubSubRequest
+from sakura.rabbitmq import RabbitMQClient
+from sakura.rabbitmq.types import PublishAddress, Queue
 
 logger = logging.getLogger(__name__)
 

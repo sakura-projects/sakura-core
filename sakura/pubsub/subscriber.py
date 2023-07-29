@@ -1,7 +1,7 @@
 import signal
 from abc import abstractmethod
 from types import FrameType
-from typing import Callable, Any
+from typing import Any, Callable
 
 from sakura.pubsub.client import PubSubClient
 from sakura.pubsub.types import PubSubApp

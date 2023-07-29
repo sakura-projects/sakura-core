@@ -1,8 +1,5 @@
 import pkgutil
 
-from .provider import Provider
-
-
 __all__ = []
 for loader, module_name, _ in pkgutil.walk_packages(__path__):
     __all__.append(module_name)

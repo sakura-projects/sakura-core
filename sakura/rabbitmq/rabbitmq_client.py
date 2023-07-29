@@ -9,8 +9,8 @@ from aio_pika.abc import (
     AbstractExchange,
     AbstractIncomingMessage,
     AbstractRobustChannel,
-    AbstractRobustQueue,
     AbstractRobustConnection,
+    AbstractRobustQueue,
     DeliveryMode,
 )
 from aio_pika.pool import Pool
