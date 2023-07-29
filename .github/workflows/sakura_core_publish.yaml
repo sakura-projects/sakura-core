@@ -22,6 +22,8 @@ jobs:
         python-version: '3.9'
 
     - name: Install Poetry
+      env: 
+        ACTIONS_STEP_DEBUG: true
       run: |
         curl -sSL https://install.python-poetry.org | python -
 
