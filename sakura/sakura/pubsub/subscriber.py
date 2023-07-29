@@ -21,7 +21,7 @@ class Subscriber:
     @abstractmethod
     async def startup(self, client: PubSubClient, app: PubSubApp, func: Callable) -> None:
         raise NotImplementedError
-    
+
     @abstractmethod
     async def main_loop(self, client: PubSubClient, app: PubSubApp, func: Callable) -> None:
         raise NotImplementedError

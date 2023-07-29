@@ -14,6 +14,8 @@ from sakura.providers import Provider
 from sakura.settings import SakuraBaseSettings
 from sakura.utils.decorators import DynamicSelfFunc
 
+logger = logging.getLogger(__name__)
+
 
 class FastAPIProvider(Provider):
     server: Optional[Server] = None
@@ -57,6 +59,8 @@ class FastAPIProvider(Provider):
 
         # Remove uvicorn signal handling
         uvicorn.server.HANDLED_SIGNALS = ()
+
+        logger.info("Starting fastapi_provider server")
 
         return self.server.serve()
 

@@ -18,7 +18,7 @@ def get_class_that_defined_method(method):
             cls = getattr(inspect.getmodule(method), class_name)
         except AttributeError:
             cls = method.__globals__.get(class_name)
-        
+
         if isinstance(cls, type):
             return cls
         return None

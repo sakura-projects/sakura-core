@@ -1,0 +1,25 @@
+name: Publish workflow for sakura-core
+
+on:
+  push:
+    paths:
+      - sakura/**
+      - .github/workflows/sakura_core_publish.yaml
+    tags:
+      - 'v[0-9]+\.[0-9]+\.[0-9]+'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Build and publish to pypi
+      uses: JRubics/poetry-publish@v1.17
+      with:
+        python_version: "3.10.9"
+        poetry_version: "==1.5.1"
+        pypi_token: ${{ secrets.PYPI_TOKEN }}
+        package_directory: "sakura"

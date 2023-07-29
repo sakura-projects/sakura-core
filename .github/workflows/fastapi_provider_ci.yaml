@@ -1,0 +1,36 @@
+name: CI for sakura-fastapi-provider
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - sakura-fastapi-provider/**
+      - .github/workflows/fastapi_provider_ci.yaml
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        path: 'sakura-fastapi-provider'
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python -
+
+    - name: Install project dependencies with Poetry
+      working-directory: ./sakura-fastapi-provider
+      run: poetry install --no-root
+
+    - name: Run pytest
+      working-directory: ./sakura-fastapi-provider
+      run: poetry run pytest -rA
