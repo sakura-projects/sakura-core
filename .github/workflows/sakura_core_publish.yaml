@@ -9,7 +9,7 @@ on:
       - configuring-ci
 
 jobs:
-  test:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,22 +19,17 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.9'
+        python-version: '3.10'
 
     - name: Install Poetry
-      env: 
-        ACTIONS_STEP_DEBUG: true
       run: |
         curl -sSL https://install.python-poetry.org | python -
 
     - name: Install project dependencies with Poetry
       run: poetry install --no-dev --no-root
 
-    - name: Build package
-      run: poetry build
-
-    - name: Publish to PyPI
-      env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-      run: echo ${{ vars.FOO }}
+    - name: Build and publish to pypi
+      uses: JRubics/poetry-publish@v1.17
+      with:
+        python_version: "3.10.9"
+        poetry_version: "==1.5.1"
