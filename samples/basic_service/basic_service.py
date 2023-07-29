@@ -8,7 +8,6 @@ from sakura import Microservice
 logger = logging.getLogger(__name__)
 
 
-# noinspection PyUnboundLocalVariable
 class Service(metaclass=Microservice, settings_files=['samples/basic_service/settings.yaml'], disable_uvloop=True):
     http: FastAPI
     once: Callable
