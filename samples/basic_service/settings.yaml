@@ -4,8 +4,6 @@ config:
   exchange:
     name: main
 
-transporters: {}
-
 providers:
   http:
     type: FastAPIProvider

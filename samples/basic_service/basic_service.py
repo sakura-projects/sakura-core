@@ -3,13 +3,13 @@ from typing import Callable
 
 from fastapi import FastAPI
 
-from sakura.core.sakura import Microservice
-
+from sakura import Microservice
 
 logger = logging.getLogger(__name__)
 
 
-class Service(metaclass=Microservice, settings_files=['samples/basic_service/settings.yaml']):
+# noinspection PyUnboundLocalVariable
+class Service(metaclass=Microservice, settings_files=['samples/basic_service/settings.yaml'], disable_uvloop=True):
     http: FastAPI
     once: Callable
     config: dict
