@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "sakura-fastapi-provider"
+version = "0.1.0"
+description = ""
+authors = []
+packages = [{include = "sakura"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+uvicorn = "^0.23.1"
+fastapi = "0.78.0"
+sakura = {path = "/home/daniel/Documents/libs/sakura-0.1.0.tar.gz"}
+loguru = "^0.7.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

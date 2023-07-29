@@ -1,0 +1,38 @@
+name: CI for sakura-fastapi-provider
+
+on:
+  push:
+    paths:
+      - sakura/**
+      - .github/workflows/sakura_core_publish.yaml
+    branches:
+      - configuring-ci
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python -
+
+    - name: Install project dependencies with Poetry
+      run: poetry install --no-dev --no-root
+
+    - name: Build package
+      run: poetry build
+
+    - name: Publish to PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+      run: poetry publish  --username=$TWINE_USERNAME --password=$TWINE_PASSWORD

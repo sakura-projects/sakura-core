@@ -50,7 +50,7 @@ class RabbitMQClient(PubSubClient):
         self.is_open = True
         self._connection_pool = Pool(self.get_connection)
         self._channel_pool = Pool(self._get_channel)
-    
+
     async def consume(self, queue: Queue, callback, declare=True, prefetch_count=10):
         async with self.get_channel() as channel:
             await channel.set_qos(prefetch_count=prefetch_count)
@@ -66,7 +66,7 @@ class RabbitMQClient(PubSubClient):
         if message is None:
             await asyncio.sleep(timeout)
             return await queue.get(timeout=5, fail=False)
-        
+
         return None
 
     async def get_message(self, queue: Queue, timeout: int = 1) -> Optional[AbstractIncomingMessage]:
@@ -193,7 +193,7 @@ class RabbitMQClient(PubSubClient):
 
             if queue.exchange:
                 exchange: AbstractExchange = await RabbitMQClient._get_exchange(
-                    exchange=queue.exchange, 
+                    exchange=queue.exchange,
                     channel=channel,
                 )
 

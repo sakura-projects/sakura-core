@@ -3,8 +3,8 @@ name: CI for sakura-fastapi-provider
 on:
   push:
     paths:
-      - sakura/providers/fastapi_provider/**
-      - .github/workflows/fastapi_ci.yaml
+      - sakura/sakura-fastapi-provider/**
+      - .github/workflows/fastapi_provider_ci.yaml
     branches:
       - configuring-ci
 
@@ -15,6 +15,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        path: 'sakura-fastapi-provider'
 
     - name: Setup Python
       uses: actions/setup-python@v2
@@ -26,7 +28,7 @@ jobs:
         curl -sSL https://install.python-poetry.org | python -
 
     - name: Install project dependencies with Poetry
-      run: poetry install --no-root --extras fastapi
+      run: poetry install --no-root
 
     - name: Run pytest
       run: poetry run pytest -rA
