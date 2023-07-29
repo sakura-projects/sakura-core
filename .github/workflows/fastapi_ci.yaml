@@ -1,4 +1,4 @@
-name: CI on Specific Path Changes
+name: CI for fastapi package
 on:
   push:
     paths:
@@ -13,14 +13,3 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
-    # Add more steps as needed for your build/test/deploy process
-    # For example:
-    # - name: Setup Node.js
-    #   uses: actions/setup-node@v2
-    #   with:
-    #     node-version: '14'
-    # - name: Install dependencies
-    #   run: npm install
-    # - name: Run tests
-    #   run: npm test
