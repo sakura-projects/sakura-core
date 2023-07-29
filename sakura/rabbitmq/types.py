@@ -4,19 +4,19 @@ from typing import Callable, Optional
 
 
 class Headers(Enum):
-    REDELIVERED_COUNT = 'x-redelivered-count'
+    REDELIVERED_COUNT = "x-redelivered-count"
 
 
 class DeliveryMode(Enum):
-    TRANSIENT_DELIVERY_MODE = 'transient'
-    PERSISTENT_DELIVERY_MODE = 'persistent'
+    TRANSIENT_DELIVERY_MODE = "transient"
+    PERSISTENT_DELIVERY_MODE = "persistent"
 
 
 @dataclasses.dataclass(eq=True, frozen=True)
 class Exchange:
-    name: str = 'default'
+    name: str = "default"
     arguments: dict = dataclasses.field(default_factory=dict)
-    type: str = 'direct'
+    type: str = "direct"  # noqa: A003
     durable: bool = True
     auto_delete: bool = False
     delivery_mode: DeliveryMode = DeliveryMode.TRANSIENT_DELIVERY_MODE

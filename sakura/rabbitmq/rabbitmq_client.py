@@ -65,9 +65,9 @@ class RabbitMQClient(PubSubClient):
         message: AbstractIncomingMessage = await queue.get(timeout=5, fail=False)
         if message is None:
             await asyncio.sleep(timeout)
-            message = await queue.get(timeout=5, fail=False)
-
-        return message
+            return await queue.get(timeout=5, fail=False)
+        
+        return None
 
     async def get_message(self, queue: Queue, timeout: int = 1) -> Optional[AbstractIncomingMessage]:
         async with self.get_channel() as channel:
@@ -110,7 +110,7 @@ class RabbitMQClient(PubSubClient):
         for message in messages:
             await message.ack()
 
-    async def produce(
+    async def produce(  # noqa: PLR0913
         self,
         exchange: Exchange,
         routing_key: str,
@@ -125,14 +125,12 @@ class RabbitMQClient(PubSubClient):
 
     async def create_message_from_payload(self, payload: Any, delivery_mode: DeliveryMode = DeliveryMode.PERSISTENT):
         payload = json.dumps(jsonable_encoder(payload)).encode(self.encoding)
-        message = aio_pika.Message(
+        return aio_pika.Message(
             payload,
             delivery_mode=delivery_mode,
             content_encoding=self.encoding,
             content_type=self.content_type,
         )
-
-        return message
 
     async def get_exchange(self, exchange: Exchange):
         async with self.get_channel() as channel:
@@ -176,8 +174,8 @@ class RabbitMQClient(PubSubClient):
                 arguments=exchange.arguments,
                 auto_delete=False,
             )
-        else:
-            return await channel.get_exchange(exchange.name, ensure=False)
+
+        return await channel.get_exchange(exchange.name, ensure=False)
 
     async def _get_queue(self, queue: Queue, channel: AbstractRobustChannel, declare: bool = False):
         async with self.__queues_lock:

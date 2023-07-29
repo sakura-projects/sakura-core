@@ -16,7 +16,7 @@ class SakuraBaseSettings(BaseModel):
 
 
 class Client(SakuraBaseSettings):
-    type: str
+    type: str  # noqa: A003
     params: dict
 
 

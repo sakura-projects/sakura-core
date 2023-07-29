@@ -21,6 +21,8 @@ def get_class_that_defined_method(method):
         
         if isinstance(cls, type):
             return cls
+        return None
+    return None
 
 
 class DynamicSelfFunc:
@@ -36,18 +38,18 @@ class DynamicSelfFunc:
         def sync_decorator(*deco_args, **deco_kwargs):
             if len(old_signature.parameters) == len(deco_args + tuple(deco_kwargs.values())):
                 return self.func(*deco_args, **deco_kwargs)
-            else:
-                return self.func(self._instance, *deco_args, **deco_kwargs)
+
+            return self.func(self._instance, *deco_args, **deco_kwargs)
 
         @functools.wraps(self.func)
         async def async_decorator(*deco_args, **deco_kwargs):
             if len(old_signature.parameters) == len(deco_args + tuple(deco_kwargs.values())):
                 return await self.func(*deco_args, **deco_kwargs)
-            else:
-                return await self.func(self._instance, *deco_args, **deco_kwargs)
+
+            return await self.func(self._instance, *deco_args, **deco_kwargs)
 
         decorator = async_decorator if inspect.iscoroutinefunction(self.func) else sync_decorator
 
-        params = [param for param in old_signature.parameters.values() if param.name != 'self']
+        params = [param for param in old_signature.parameters.values() if param.name != "self"]
         decorator.__signature__ = old_signature.replace(parameters=params)
         return decorator

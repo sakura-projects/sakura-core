@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class RabbitMQSubscriber(Subscriber):
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         client_id: str,
         queue: Optional[Queue] = None,

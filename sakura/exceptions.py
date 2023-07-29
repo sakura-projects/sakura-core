@@ -1,23 +1,23 @@
 import pydantic
 
 
-class HTTPTransporterNotInitialized(Exception):
+class HTTPTransporterNotInitializedError(Exception):
     pass
 
 
-class PubSubTransporterNotInitialized(Exception):
+class PubSubTransporterNotInitializedError(Exception):
     pass
 
 
-class MissingParameterException(Exception):
+class MissingParameterError(Exception):
     pass
 
 
-class InvalidParameterTypeException(Exception):
+class InvalidParameterTypeError(Exception):
     pass
 
 
-class ValidationException(Exception):
+class ValidationError(Exception):
     @classmethod
     def from_pydantic(cls, pydantic_error: pydantic.ValidationError):
         errors = [
@@ -31,11 +31,11 @@ class ValidationException(Exception):
         return cls(str(errors))
 
 
-class UnsupportedClientException(Exception):
+class UnsupportedClientError(Exception):
     pass
 
 
-class ClientNotFoundException(Exception):
+class ClientNotFoundError(Exception):
     pass
 
 
@@ -43,5 +43,5 @@ class DecodeError(Exception):
     pass
 
 
-class PropertyDoesntExist(Exception):
+class PropertyDoesntExistError(Exception):
     pass

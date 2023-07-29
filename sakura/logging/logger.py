@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from abc import abstractmethod
+from typing import TYPE_CHECKING
 
-from sakura.settings import SakuraBaseSettings
+if TYPE_CHECKING:
+    from sakura.settings import SakuraBaseSettings
 
 
 class Logger:

@@ -9,7 +9,6 @@ class MockTransporter:
         pass
 
     def __getattr__(self, item):
-        # noinspection PyUnusedLocal
         def dummy_deco(*args, **kwargs):
             def dum(func):
                 return func

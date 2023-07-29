@@ -35,7 +35,7 @@ class Sakura:
         for logger in self.loggers:
             logger.setup()
 
-        config = functools.reduce(merge_dicts, map(lambda a: a.get_basic_config(), self.loggers))
+        config = functools.reduce(merge_dicts, (a.get_basic_config() for a in self.loggers))
         logging.basicConfig(**config)
 
     def setup_providers(self):

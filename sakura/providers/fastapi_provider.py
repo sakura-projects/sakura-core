@@ -37,15 +37,14 @@ class FastAPIProvider(Provider):
 
             return functools.wraps(func)(wildcard_method)
 
-        for method in ['get', 'post', 'put', 'delete']:
+        for method in ["get", "post", "put", "delete"]:
             self.app.__setattr__(method, deco(self.app.__getattribute__(method)))
 
     def setup(self) -> typing.Coroutine:
         # TODO: make sure that Config is running on the same event loop as the other services
-        # noinspection PyTypeChecker
         config = Config(
             self.app,
-            host='0.0.0.0',
+            host="0.0.0.0",  # noqa: S104
             port=self.settings.port,
         )
 
@@ -57,8 +56,7 @@ class FastAPIProvider(Provider):
         logging.getLogger("uvicorn.access").addHandler(InterceptHandler())
 
         # Remove uvicorn signal handling
-        # noinspection PyUnresolvedReferences
-        uvicorn.server.HANDLED_SIGNALS = tuple()
+        uvicorn.server.HANDLED_SIGNALS = ()
 
         return self.server.serve()
 

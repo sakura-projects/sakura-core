@@ -1,6 +1,5 @@
 import signal
 from abc import abstractmethod
-from types import FrameType
 from typing import Any, Callable
 
 from sakura.pubsub.client import PubSubClient
@@ -35,7 +34,7 @@ class Subscriber:
     async def create_callback(self, client: PubSubClient, app: PubSubApp, func: Callable) -> None:
         raise NotImplementedError
 
-    def handle_exit(self, sig: signal.Signals, frame: FrameType) -> None:
+    def handle_exit(self, sig: signal.Signals) -> None:
         if self.should_exit and sig == signal.SIGINT:
             self.force_exit = True
         else:

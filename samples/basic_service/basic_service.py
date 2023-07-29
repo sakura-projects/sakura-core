@@ -8,15 +8,15 @@ from sakura import Microservice
 logger = logging.getLogger(__name__)
 
 
-class Service(metaclass=Microservice, settings_files=['samples/basic_service/settings.yaml'], disable_uvloop=True):
+class Service(metaclass=Microservice, settings_files=["samples/basic_service/settings.yaml"], disable_uvloop=True):
     http: FastAPI
     once: Callable
     config: dict
 
     @once
     async def run(self):
-        logger.info('Started service')
+        logger.info("Started service")
 
-    @http.get('/')
+    @http.get("/")
     async def root(self):
-        return {'foo': 'bar'}
+        return {"foo": "bar"}

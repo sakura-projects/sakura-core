@@ -8,7 +8,7 @@ from sakura.utils.factory import client_factory
 
 
 class ClientSettings(SakuraBaseSettings):
-    type: str
+    type: str  # noqa: A003
     params: dict
 
 

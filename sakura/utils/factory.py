@@ -1,4 +1,4 @@
-from sakura.exceptions import UnsupportedClientException
+from sakura.exceptions import UnsupportedClientError
 
 
 # TODO: update transporters name to more generic name
@@ -16,7 +16,6 @@ def get_inheritors_dict(class_to_check: type) -> dict[str, type]:
     return transporters
 
 
-# noinspection PyUnresolvedReferences
 def list_factory(settings: dict, factory_type: type) -> list:
     objects = []
     inheritors_dict = get_inheritors_dict(factory_type)
@@ -32,7 +31,7 @@ def list_factory(settings: dict, factory_type: type) -> list:
     return objects
 
 
-# TODO: removed refences to provider
+# TODO: remove references to provider
 def dict_factory(settings: dict, parent_type: type) -> dict:
     objects: dict[str, object] = {}
     inheritors_dict = get_inheritors_dict(parent_type)
@@ -41,7 +40,6 @@ def dict_factory(settings: dict, parent_type: type) -> dict:
         if value["type"] not in inheritors_dict:
             raise ValueError(f"Object of type {value['type']} is not supported, check whether it's installed")
 
-        # noinspection PyUnresolvedReferences
         settings = inheritors_dict[value["type"]].Settings.from_dynaconf(value["params"])
 
         provider = inheritors_dict[value["type"]](settings)
@@ -54,6 +52,6 @@ def client_factory(settings: dict, client_type: str, factory_type: type):
     inheritors_dict = get_inheritors_dict(factory_type)
 
     if client_type not in inheritors_dict:
-        raise UnsupportedClientException()
+        raise UnsupportedClientError
 
     return inheritors_dict[client_type](**settings)

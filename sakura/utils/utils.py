@@ -5,11 +5,11 @@ def merge_dicts(a: dict, b: dict, path=None):
             if isinstance(a[key], list) and isinstance(b[key], list):
                 a[key] += b[key]
             elif isinstance(a[key], dict) and isinstance(b[key], dict):
-                merge_dicts(a[key], b[key], path + [str(key)])
+                merge_dicts(a[key], b[key], [*path, str(key)])
             elif a[key] == b[key]:
                 pass
             else:
-                raise ValueError(f"Conflict at {'.'.join(path + [str(key)])}")
+                raise ValueError(f"Conflict at {'.'.join([*path, str(key)])}")
         else:
             a[key] = b[key]
 

@@ -5,8 +5,31 @@ target-version = "py39"  # the python version to target, useful when considering
 select = [
   "E",   # pycodestyle
   "F",   # pyflakes
-  "UP",  # pyupgrade,
+  "UP",  # pyupgrade
   "I",   # isort
+  "N",   # pep8-naming
+  "S",   # flake8-bandit
+  "BLE", # flake8-blind-except
+  "A",   # flake8-builtins
+  "C4",  # flake8-comprehensions
+  "DTZ", # flake8-datetimez
+  "ICN", # flake8-import-conventions
+  "INP", # flake8-no-pep420
+  "PIE", # flake8-pie
+  "T20", # flake8-print
+  "PYI", # flake8-pyi
+  "PT",  # flake8-pytest-style
+  "Q",   # flake8-quotes
+  "RSE", # flake8-raise
+  "RET", # flake8-return
+  "SIM", # flake8-simplify
+  "TID", # flake8-tidy-imports
+  "TCH", # flake8-type-checking
+#  "ARG", # flake8-unused-arguments
+  "PTH", # flake8-use-pathlib
+  "PGH", # pygrep-hooks
+  "PL",  # Pylint
+  "RUF", # Ruff-specific rules
 ]
 
 [tool.ruff.per-file-ignores]

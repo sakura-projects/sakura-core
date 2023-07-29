@@ -13,4 +13,4 @@ class JSONDecoder(Decoder):
         try:
             return json.loads(body)
         except json.JSONDecodeError as e:
-            raise DecodeError(f'JSON decoding failed due to {{{e}}}')
+            raise DecodeError(f"JSON decoding failed due to {{{e}}}")
