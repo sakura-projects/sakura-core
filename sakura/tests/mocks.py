@@ -9,7 +9,7 @@ class MockTransporter:
         pass
 
     def __getattr__(self, item):
-        def dummy_deco(*args, **kwargs):
+        def dummy_deco(*args, **kwargs):   # noqa: ARG001
             def dum(func):
                 return func
 

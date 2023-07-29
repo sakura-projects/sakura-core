@@ -55,7 +55,7 @@ class Microservice(type):
             }
         }
 
-    def __new__(cls, name, bases, attrs, **kwargs):
+    def __new__(cls, name, bases, attrs, **kwargs):  # noqa: ARG003
         if not cls._instance:
             cls._instance = super().__new__(cls, name, bases, attrs)
             DynamicSelfFunc._instance = cls._instance

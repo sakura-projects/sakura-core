@@ -63,7 +63,7 @@ class RabbitMQSubscriber(Subscriber):
 
             await asyncio.sleep(0.1)
 
-    async def shutdown(self, client: RabbitMQClient, app: PubSubApp, func: Callable):
+    async def shutdown(self, client: RabbitMQClient, app: PubSubApp, func: Callable):  # noqa: ARG002
         logger.info("Waiting for RabbitMQ shutdown")
         await client.close()
         logger.info("Successfully shutdown RabbitMQ client")

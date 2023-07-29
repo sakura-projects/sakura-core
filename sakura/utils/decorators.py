@@ -31,7 +31,7 @@ class DynamicSelfFunc:
     def __init__(self, func: Callable):
         self.func = func
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs):  # noqa: ARG002
         old_signature = inspect.signature(self.func)
 
         @functools.wraps(self.func)
