@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - sakura/providers/fastapi_provider/**
-      - .github/workflows/fastapi_provider/**
+      - .github/workflows/fastapi_ci.yaml
     branches:
       - configuring-ci
 
