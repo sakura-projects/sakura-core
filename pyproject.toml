@@ -57,6 +57,7 @@ select = [
   "PGH", # pygrep-hooks
   "PL",  # Pylint
   "RUF", # Ruff-specific rules
+  "COM", # flake8-commas
 ]
 
 [tool.ruff.per-file-ignores]
