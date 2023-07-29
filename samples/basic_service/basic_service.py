@@ -18,5 +18,5 @@ class Service(metaclass=Microservice, settings_files=["samples/basic_service/set
         logger.info("Started service")
 
     @http.get("/")
-    async def root(self, args):
+    async def root(self):
         return {"foo": "bar"}
