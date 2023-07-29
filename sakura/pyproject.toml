@@ -1,8 +1,9 @@
 [tool.poetry]
-name = "sakura"
+name = "sakura-core"
 version = "0.1.0"
 description = ""
 authors = []
+packages = [{include = "sakura"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
