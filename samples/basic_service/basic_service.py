@@ -14,9 +14,9 @@ class Service(metaclass=Microservice, settings_files=['samples/basic_service/set
     once: Callable
     config: dict
 
-    # @once
-    # async def run(self):
-    #     logger.info('Started service')
+    @once
+    async def run(self):
+        logger.info('Started service')
 
     @http.get('/')
     async def root(self):

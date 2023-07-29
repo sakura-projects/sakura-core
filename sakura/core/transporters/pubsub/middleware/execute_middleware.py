@@ -8,7 +8,7 @@ from asyncer import asyncify
 from fastapi.dependencies.utils import get_typed_signature, get_param_field
 
 from sakura.core.pubsub.types import PubSubRequest, PubSubApp
-from sakura.core.utils.decorators import dynamic_self_func
+from sakura.core.utils.decorators import DynamicSelfFunc
 from sakura.core.utils.types import DecoratedCallable
 
 logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 class ExecuteMiddleware(PubSubApp):
     async def __call__(self, request: PubSubRequest, handler: DecoratedCallable):
-        new_handler = dynamic_self_func(handler)
+        new_handler = DynamicSelfFunc(handler)()
         endpoint_signature = get_typed_signature(new_handler)
 
         values, errors = self.request_payload_to_args(endpoint_signature, request)

@@ -1,7 +1,8 @@
-import asyncio
+import functools
 import logging
 import signal
 import typing
+from functools import wraps
 from typing import Optional, Any
 
 import fastapi
@@ -15,6 +16,9 @@ from sakura.core.settings import SakuraBaseSettings
 
 
 # noinspection DuplicatedCode
+from sakura.core.utils.decorators import DynamicSelfFunc
+
+
 class FastAPIProvider(Provider):
     server: Optional[Server] = None
 
@@ -30,7 +34,18 @@ class FastAPIProvider(Provider):
             **settings.extra,
         )
 
+        def deco(func):
+            def wildcard_method(*args, **kwargs):
+                result = func(*args, **kwargs)
+                return lambda f: result(DynamicSelfFunc(f)())
+
+            return functools.wraps(func)(wildcard_method)
+
+        for method in ['get', 'post', 'put', 'delete']:
+            self.app.__setattr__(method, deco(self.app.__getattribute__(method)))
+
     def setup(self) -> typing.Coroutine:
+        # TODO: make sure that Config is running on the same event loop as the other services
         # noinspection PyTypeChecker
         config = Config(
             self.app,

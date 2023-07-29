@@ -23,25 +23,25 @@ def run(
     debug: Optional[bool] = typer.Option(False, '--debug'),
 ):
     initialize_service(module_name)
-    use_uvloop = not disable_uvloop
-
-    if debug:
-        logging.getLogger('sakura').setLevel(logging.DEBUG)
-
-    if use_uvloop:
-        try:
-            import uvloop
-        except ImportError:
-            logging.getLogger('sakura').error('Please install uvloop or consider running with the --disable-uvloop flag')
-            return
-
-    initialize_loop(use_uvloop=use_uvloop)
-
-    settings = Dynaconf(
-        envvar_prefix="SAKURA",
-        settings_files=settings_path,
-        load_dotenv=load_dotenv,
-    )
+    # use_uvloop = not disable_uvloop
+    #
+    # if debug:
+    #     logging.getLogger('sakura').setLevel(logging.DEBUG)
+    #
+    # if use_uvloop:
+    #     try:
+    #         import uvloop
+    #     except ImportError:
+    #         logging.getLogger('sakura').error('Please install uvloop or consider running with the --disable-uvloop flag')
+    #         return
+    #
+    # initialize_loop(use_uvloop=use_uvloop)
+    #
+    # settings = Dynaconf(
+    #     envvar_prefix="SAKURA",
+    #     settings_files=settings_path,
+    #     load_dotenv=load_dotenv,
+    # )
 
 
 @app.command(name='info')

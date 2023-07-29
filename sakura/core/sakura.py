@@ -5,6 +5,7 @@ import functools
 import logging
 import signal
 import threading
+import typing
 
 from types import FrameType
 from typing import Optional, Callable, TypeVar
@@ -17,7 +18,7 @@ from sakura.core.providers import Provider
 from sakura.core.settings import Settings
 from sakura.core.transporters.transporter import Transporter
 from sakura.core.utils import merge_dicts
-from sakura.core.utils.decorators import dynamic_self_func
+from sakura.core.utils.decorators import DynamicSelfFunc
 from sakura.core.utils.factory import list_factory, dict_factory
 
 HANDLED_SIGNALS = (
@@ -44,7 +45,7 @@ class Sakura:
         self.__transporters = transporters
         self.__providers = providers
         self.__loggers = loggers
-        self.__tasks: list[asyncio.Task] = []
+        self.__tasks: list[typing.Coroutine] = []
         self.__should_exit = False
         self.__force_exit = False
         self.init_logging()
@@ -69,8 +70,8 @@ class Sakura:
         self.setup_providers()
 
     async def start(self):
-        # for func in self._once_functions:
-        #     await dynamic_self_func(func)()
+        for func in self._once_functions:
+            await DynamicSelfFunc(func)()()
 
         self.install_signal_handlers()
         await asyncio.gather(*[asyncio.create_task(task) for task in self.__tasks])
@@ -195,10 +196,7 @@ class Microservice(type):
     def __new__(mcs, name, bases, attrs, **kwargs):
         if not mcs._instance:
             mcs._instance = super(Microservice, mcs).__new__(mcs, name, bases, attrs)
-
-            for name, member in inspect.getmembers(mcs._instance):
-                if inspect.isfunction(member):
-                    setattr(mcs._instance, name, dynamic_self_func(func=member, _instance=mcs._instance))
+            DynamicSelfFunc._instance = mcs._instance
 
         asyncio.run(mcs.__sakura_service.start())
         return mcs._instance
