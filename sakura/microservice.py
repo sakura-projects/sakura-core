@@ -52,7 +52,7 @@ class Microservice(type):
             "config": settings.config, **{
                 name: sakura.__getattribute__(name) for name, member in inspect.getmembers(sakura)
                 if not inspect.ismethod(member) and not name.startswith("_")
-            }
+            },
         }
 
     def __new__(cls, name, bases, attrs, **kwargs):  # noqa: ARG003
