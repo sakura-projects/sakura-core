@@ -60,7 +60,7 @@ class FastAPIProvider(Provider):
         # Remove uvicorn signal handling
         uvicorn.server.HANDLED_SIGNALS = ()
 
-        logger.info("Starting fastapi server")
+        logger.info("Starting fastapi_provider server")
 
         return self.server.serve()
 
