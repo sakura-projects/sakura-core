@@ -34,3 +34,4 @@ jobs:
         python_version: "3.10.9"
         poetry_version: "==1.5.1"
         pypi_token: ${{ secrets.PYPI_TOKEN }}
+        package_directory: "sakura"
