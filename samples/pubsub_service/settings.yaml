@@ -1,0 +1,65 @@
+config:
+  my_settings: blabla
+
+loggers:
+  serialization: true
+  handlers: []
+
+pubsub:
+  client1:
+    type: KafkaPubSub
+    serialization: AvroSerializer
+    params:
+      brokers:
+        - 'localhost:9092'
+      declare:
+        topics:
+          - name: topic.output
+            partitions: 6
+            partition_strategy: bla
+          - name: topic.input
+            partitions: 6
+            partition_strategy: bla
+    subsribers:
+      subscriber1:
+        topic: topic.input
+        consumer_group: watson
+    publishers:
+      publisher1:
+        topic: topic.output
+
+  client2:
+    type: RabbitMQPubSub
+    params:
+      uri: amqp://localhost:5672
+      serialization: JSONSerializer
+      encoding: utf-8
+      prefetch_count: 5
+      virtual_host: /
+      declare:
+        queues:
+          - name: queue.input
+            durable: true
+            arguments:
+              x-dead-letter-exchange: rabbit_config.deadletter_exchange
+              x-dead-letter-routing-key: rabbit_config.deadletter_queue_name
+              x-queue-type: quorum
+              x-delivery-limit: 3
+        exchanges:
+          - name: ""
+            durable: true
+    subscribers:
+      subscriber1:
+        queue: queue.input
+    publishers:
+      publisher1:
+        exchange: ""
+        routing_key: routing1
+
+providers:
+  http:
+    type: FastAPIProvider
+    params:
+      port: 8080
+  cron:
+    type: CronjobTransporter
