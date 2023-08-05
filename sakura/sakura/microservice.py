@@ -1,15 +1,20 @@
 import asyncio
 import inspect
+import logging
 from typing import Optional
 
 from dynaconf import Dynaconf
 
 from sakura.logging import Logger
 from sakura.providers import Provider
+from sakura.pubsub.client import PubSubClient
+from sakura.pubsub.factory import pubsub_factory
 from sakura.sakura import Sakura
 from sakura.settings import Settings
 from sakura.utils.decorators import DynamicSelfFunc
 from sakura.utils.factory import dict_factory, list_factory
+
+logger = logging.getLogger("sakura")
 
 
 class Microservice(type):
@@ -38,10 +43,11 @@ class Microservice(type):
 
         settings = Settings.from_dynaconf(settings)
 
+        pubsub_clients = pubsub_factory(settings.pubsub, PubSubClient)
         providers = dict_factory(settings.providers, Provider)
         loggers = list_factory(settings.loggers, Logger)
 
-        cls.__sakura_service = Sakura(providers=providers, loggers=loggers)
+        cls.__sakura_service = Sakura(providers=providers, pubsub_clients=pubsub_clients, loggers=loggers)
         sakura = cls.__sakura_service
 
         sakura.setup()
@@ -49,6 +55,7 @@ class Microservice(type):
         return {
             "__sakura_service": sakura,
             "once": sakura.once,
+            "pubsub": sakura.pubsub,
             "config": settings.config, **{
                 name: sakura.__getattribute__(name) for name, member in inspect.getmembers(sakura)
                 if not inspect.ismethod(member) and not name.startswith("_")
@@ -59,6 +66,13 @@ class Microservice(type):
         if not cls._instance:
             cls._instance = super().__new__(cls, name, bases, attrs)
             DynamicSelfFunc._instance = cls._instance
+        loop = asyncio.get_event_loop()
 
-        asyncio.run(cls.__sakura_service.start())
+        try:
+            loop.run_until_complete(cls.__sakura_service.start())
+        except KeyboardInterrupt:
+            logger.error("Service has been closed unexpectedly")
+        finally:
+            loop.run_until_complete(cls.__sakura_service.teardown())
+
         return cls._instance

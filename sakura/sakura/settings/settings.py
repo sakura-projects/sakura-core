@@ -22,5 +22,6 @@ class Client(SakuraBaseSettings):
 
 class Settings(SakuraBaseSettings):
     loggers: DynaBox
+    pubsub: DynaBox = pydantic.fields.Field(default=DynaBox)
     providers: DynaBox = pydantic.fields.Field(default_factory=DynaBox)
     config: DynaBox = pydantic.fields.Field(default_factory=DynaBox)

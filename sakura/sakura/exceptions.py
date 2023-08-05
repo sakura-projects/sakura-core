@@ -39,6 +39,10 @@ class ClientNotFoundError(Exception):
     pass
 
 
+class SubscriberNotFoundError(Exception):
+    pass
+
+
 class DecodeError(Exception):
     pass
 

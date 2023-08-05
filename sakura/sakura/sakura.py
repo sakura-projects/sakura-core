@@ -10,6 +10,7 @@ from asyncer import asyncify
 
 from sakura.logging import Logger
 from sakura.providers import Provider
+from sakura.pubsub.client import PubSubClient
 from sakura.utils import merge_dicts
 from sakura.utils.decorators import DynamicSelfFunc
 
@@ -21,21 +22,25 @@ class Sakura:
     def __init__(
         self,
         providers: Optional[dict[str, Provider]],
+        pubsub_clients: Optional[dict[str, PubSubClient]],
         loggers: Optional[list[Logger]] = None,
     ):
         self._once_functions = []
         self.__providers = providers
+        self.__pubsub = pubsub_clients
         self.__loggers = loggers
         self.__tasks: list[typing.Coroutine] = []
         self.__should_exit = False
         self.__force_exit = False
-        self.init_logging()
 
-    def init_logging(self):
+    def setup_loggers(self):
         for logger in self.loggers:
             logger.setup()
 
-        config = functools.reduce(merge_dicts, (a.get_basic_config() for a in self.loggers))
+        config = functools.reduce(
+            merge_dicts,
+            (a.get_basic_config() for a in self.loggers),
+        )
         logging.basicConfig(**config)
 
     def setup_providers(self):
@@ -43,18 +48,24 @@ class Sakura:
             self.__tasks.append(provider.setup())
             setattr(self, name, provider.get_dependency())
 
+    def setup_pubsub_clients(self):
+        for client_id, client in self.__pubsub.items():
+            client.setup()
+
     def setup(self):
+        self.setup_loggers()
         self.setup_providers()
+        self.setup_pubsub_clients()
 
     async def start(self):
+        for pubsub_client in self.__pubsub.values():
+            self.__tasks.extend(pubsub_client.start())
+
         for func in self._once_functions:
             await DynamicSelfFunc(func)()()
 
         self.install_signal_handlers()
         await asyncio.gather(*[asyncio.create_task(task) for task in self.__tasks])
-
-        for provider in self.__providers.values():
-            await provider.teardown()
 
     def once(self, orig_func: Callable):
         func = orig_func
@@ -69,6 +80,10 @@ class Sakura:
     def loggers(self):
         return self.__loggers
 
+    @property
+    def pubsub(self) -> dict[str, PubSubClient]:
+        return self.__pubsub
+
     def install_signal_handlers(self) -> None:
         if threading.current_thread() is not threading.main_thread():
             # Signals can only be listened to from the main thread.
@@ -77,13 +92,13 @@ class Sakura:
         loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
 
         for sig in [signal.SIGINT, signal.SIGTERM]:
-            loop.add_signal_handler(sig, lambda: asyncio.create_task(self.teardown(sig)))
+            loop.add_signal_handler(
+                sig, lambda: asyncio.create_task(self.teardown()),
+            )
 
-    async def teardown(self, sig: signal.Signals) -> None:
-        if self.__should_exit and sig == signal.SIGINT:
-            self.__force_exit = True
-        else:
-            self.__should_exit = True
-
+    async def teardown(self) -> None:
         for provider in self.__providers.values():
             await provider.teardown()
+
+        for pubsub_client in self.__pubsub.values():
+            await pubsub_client.teardown()
