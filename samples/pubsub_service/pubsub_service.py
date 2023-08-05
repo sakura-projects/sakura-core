@@ -17,5 +17,5 @@ class Service(metaclass=Microservice, settings_files=["samples/pubsub_service/se
         logger.info("Started service")
 
     @pubsub["client1"].subscribe("subscriber1")
-    async def get_from_rabbit(self, *args, **kwargs):
+    def get_from_rabbit(self, *args, **kwargs):
         logger.info("From rabbit...")

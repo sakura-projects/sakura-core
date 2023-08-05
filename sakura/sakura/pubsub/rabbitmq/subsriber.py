@@ -2,9 +2,16 @@ import asyncio
 import logging
 from typing import Callable, Optional
 
+import asyncer
+
+from sakura.pubsub.rabbitmq.middlewares.ack_middleware import AckMiddleware
+from sakura.pubsub.rabbitmq.middlewares.asyncify_middleware import AsyncifyMiddleware
+from sakura.pubsub.rabbitmq.middlewares.decode_middleware import DecodeMiddleware
+from sakura.pubsub.rabbitmq.middlewares.dynamic_self_func_middleware import DynamicSelfFuncMiddleware
 from sakura.pubsub.rabbitmq.rabbitmq_client import RabbitMQClient
 from sakura.pubsub.rabbitmq.settings import SubscriberSettings
 from sakura.pubsub.subscriber import Subscriber
+from sakura.utils.decorators import DynamicSelfFunc
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +35,9 @@ class RabbitMQSubscriber(Subscriber):
         await self.main_loop()
         await self.shutdown()
 
-    async def consume(self, queue: str, callback: Callable):
+    async def consume(self, queue: str, func: Callable):
+        callback = self.build_callback(func)
+
         async with self.client.get_channel() as channel:
             await channel.set_qos(prefetch_count=self.prefetch_count)
             rmq_queue = await channel.get_queue(queue, ensure=True)
@@ -36,6 +45,19 @@ class RabbitMQSubscriber(Subscriber):
             logger.info(f'Consuming queue: "{queue}"')
             await rmq_queue.consume(callback)
             await asyncio.Future()
+
+    def build_callback(self, func: Callable) -> Callable:
+        middlewares = [
+            DynamicSelfFuncMiddleware(),
+            AsyncifyMiddleware(),
+            DecodeMiddleware(),
+            AckMiddleware(auto_ack=self.auto_ack),
+        ]
+
+        for middleware in middlewares:
+            func = middleware(func)
+
+        return func
 
     async def startup(self):
         loop = asyncio.get_running_loop()
