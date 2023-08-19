@@ -2,8 +2,6 @@ import asyncio
 import logging
 from typing import Callable, Optional
 
-import asyncer
-
 from sakura.pubsub.rabbitmq.middlewares.ack_middleware import AckMiddleware
 from sakura.pubsub.rabbitmq.middlewares.asyncify_middleware import AsyncifyMiddleware
 from sakura.pubsub.rabbitmq.middlewares.decode_middleware import DecodeMiddleware
@@ -11,7 +9,6 @@ from sakura.pubsub.rabbitmq.middlewares.dynamic_self_func_middleware import Dyna
 from sakura.pubsub.rabbitmq.rabbitmq_client import RabbitMQClient
 from sakura.pubsub.rabbitmq.settings import SubscriberSettings
 from sakura.pubsub.subscriber import Subscriber
-from sakura.utils.decorators import DynamicSelfFunc
 
 logger = logging.getLogger(__name__)
 

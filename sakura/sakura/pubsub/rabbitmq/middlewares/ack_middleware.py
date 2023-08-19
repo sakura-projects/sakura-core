@@ -1,5 +1,5 @@
 import logging
-from typing import Callable, Optional
+from typing import Callable
 
 from aio_pika.abc import AbstractIncomingMessage
 

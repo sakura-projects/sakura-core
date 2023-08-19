@@ -12,7 +12,7 @@ class DecodeMiddleware(Middleware):
     DEFAULT_CONTENT_ENCODING = "utf-8"
 
     decoders = {
-        "application/json": JSONDecoder()
+        "application/json": JSONDecoder(),
     }
 
     def __call__(self, func: Callable) -> Callable:
