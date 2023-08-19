@@ -9,8 +9,8 @@ class Declare(SakuraBaseSettings):
     exchanges: list[Exchange] = pydantic.Field(default_factory=list)
 
 
-class Settings(SakuraBaseSettings):
-    declare: Declare = Declare()
+class RabbitMQClientSettings(SakuraBaseSettings):
+    declare: Declare = pydantic.Field(default_factory=Declare)
     uri: str = "amqp://localhost:5672"
     virtualhost: str = "/"
     encoding: str = "utf-8"

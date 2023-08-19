@@ -3,8 +3,7 @@ from collections.abc import Coroutine
 
 from sakura.exceptions import SubscriberNotFoundError
 from sakura.pubsub.client import PubSubClient
-from sakura.pubsub.rabbitmq.rabbitmq_client import RabbitMQClient
-from sakura.pubsub.rabbitmq.rabbitmq_client import Settings as RabbitMQClientSettings
+from sakura.pubsub.rabbitmq.rabbitmq_client import RabbitMQClient, RabbitMQClientSettings
 from sakura.pubsub.rabbitmq.settings import Settings
 from sakura.pubsub.rabbitmq.subsriber import RabbitMQSubscriber
 

@@ -14,7 +14,7 @@ from sakura.settings import Settings
 from sakura.utils.decorators import DynamicSelfFunc
 from sakura.utils.factory import dict_factory, list_factory
 
-logger = logging.getLogger("sakura")
+logger = logging.getLogger(__name__)
 
 
 class Microservice(type):

@@ -14,14 +14,14 @@ from aio_pika.abc import (
 )
 from aio_pika.pool import Pool
 
-from sakura.pubsub.rabbitmq.rabbitmq_client.settings import Settings
+from sakura.pubsub.rabbitmq.rabbitmq_client.settings import RabbitMQClientSettings
 from sakura.pubsub.rabbitmq.rabbitmq_client.types import Exchange, Queue
 
 logger = getLogger(__name__)
 
 
 class RabbitMQClient:
-    Settings = Settings
+    Settings = RabbitMQClientSettings
 
     __queues: dict[str, AbstractQueue]
     _connection_pool: Pool[AbstractRobustConnection]

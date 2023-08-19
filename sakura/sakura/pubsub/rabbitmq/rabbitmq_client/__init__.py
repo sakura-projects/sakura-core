@@ -1,7 +1,7 @@
 from .client import RabbitMQClient
-from .settings import Settings
+from .settings import RabbitMQClientSettings
 
 __all__ = [
     "RabbitMQClient",
-    "Settings",
+    "RabbitMQClientSettings",
 ]
