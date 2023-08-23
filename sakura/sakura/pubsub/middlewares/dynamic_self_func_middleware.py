@@ -1,6 +1,6 @@
 from typing import Callable
 
-from sakura.pubsub.rabbitmq.middlewares import Middleware
+from sakura.pubsub.middlewares.middleware import Middleware
 from sakura.utils.decorators import DynamicSelfFunc
 
 

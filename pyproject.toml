@@ -6,19 +6,27 @@ authors = []
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
 pre-commit = "^3.3.3"
+
+
+[tool.poetry.group.sakura.dependencies]
+sakura-core = {path = "sakura"}
+
+
+[tool.poetry.group.sakura-fastapi-provider.dependencies]
+sakura-fastapi-provider = {path = "sakura-fastapi-provider"}
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
-line-length = 120       # defaults to 88 like black
-target-version = "py39" # the python version to target, useful when considering code upgrades, defaults to "py310"
+line-length = 120
+target-version = "py39"
 
 select = [
   "E",   # pycodestyle

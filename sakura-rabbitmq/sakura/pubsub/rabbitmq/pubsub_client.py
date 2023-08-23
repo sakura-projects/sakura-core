@@ -5,7 +5,7 @@ from sakura.exceptions import SubscriberNotFoundError
 from sakura.pubsub.client import PubSubClient
 from sakura.pubsub.rabbitmq.rabbitmq_client import RabbitMQClient, RabbitMQClientSettings
 from sakura.pubsub.rabbitmq.settings import Settings
-from sakura.pubsub.rabbitmq.subsriber import RabbitMQSubscriber
+from sakura.pubsub.rabbitmq.subscriber import RabbitMQSubscriber
 
 
 class RabbitMQPubSubClient(PubSubClient):
@@ -21,11 +21,11 @@ class RabbitMQPubSubClient(PubSubClient):
         self.__rabbitmq_client = RabbitMQClient(RabbitMQClientSettings.from_dynaconf(raw_settings=settings.params))
         super().__init__()
 
-    def setup(self):
+    def __setup(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.__rabbitmq_client.setup())
 
-    def start(self) -> list[Coroutine]:
+    def __start(self) -> list[Coroutine]:
         tasks: list[Coroutine] = []
 
         for subscriber_id, func in self._event_store.items():
@@ -45,6 +45,6 @@ class RabbitMQPubSubClient(PubSubClient):
 
         return tasks
 
-    async def teardown(self):
+    async def __teardown(self):
         for subscriber_id, subscriber in self.__running_subscribers.items():
             subscriber.should_exit = True

@@ -3,7 +3,7 @@ from typing import Callable
 
 import asyncer
 
-from sakura.pubsub.rabbitmq.middlewares import Middleware
+from sakura.pubsub.middlewares.middleware import Middleware
 
 
 class AsyncifyMiddleware(Middleware):

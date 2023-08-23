@@ -45,12 +45,12 @@ class Sakura:
 
     def setup_providers(self):
         for name, provider in self.__providers.items():
-            self.__tasks.append(provider.setup())
-            setattr(self, name, provider.get_dependency())
+            self.__tasks.append(provider.__setup())
+            setattr(self, name, provider.__get_dependency())
 
     def setup_pubsub_clients(self):
         for client_id, client in self.__pubsub.items():
-            client.setup()
+            client.__setup()
 
     def setup(self):
         self.setup_loggers()
@@ -59,7 +59,7 @@ class Sakura:
 
     async def start(self):
         for pubsub_client in self.__pubsub.values():
-            self.__tasks.extend(pubsub_client.start())
+            self.__tasks.extend(pubsub_client.__start())
 
         for func in self._once_functions:
             await DynamicSelfFunc(func)()()
@@ -98,7 +98,7 @@ class Sakura:
 
     async def teardown(self) -> None:
         for provider in self.__providers.values():
-            await provider.teardown()
+            await provider.__teardown()
 
         for pubsub_client in self.__pubsub.values():
-            await pubsub_client.teardown()
+            await pubsub_client.__teardown()
