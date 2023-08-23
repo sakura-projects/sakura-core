@@ -12,9 +12,13 @@ class Service(metaclass=Microservice, settings_files=["samples/pubsub_service/se
     pubsub: dict[str, PubSubClient]
     config: dict
 
+    def hello(self):
+        logger.info('hellloo')
+
     @once
     async def run(self):
         logger.info("Started service")
+        self.hello()
 
     @pubsub["client1"].subscribe("subscriber1")
     def get_from_rabbit(self, *args, **kwargs):  # noqa: ARG002

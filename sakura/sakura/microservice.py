@@ -1,8 +1,11 @@
 import asyncio
 import inspect
+import json
 import logging
+import os
 from typing import Optional
 
+from dotenv import load_dotenv
 from dynaconf import Dynaconf
 
 from sakura.logging import Logger
@@ -14,6 +17,7 @@ from sakura.settings import Settings
 from sakura.utils.decorators import DynamicSelfFunc
 from sakura.utils.factory import dict_factory, list_factory
 
+load_dotenv()
 logger = logging.getLogger(__name__)
 
 
@@ -24,10 +28,9 @@ class Microservice(type):
 
     @classmethod
     def __prepare__(cls, name: str, bases: list, **kwargs):
-        envvar_prefix = kwargs.get("envvar_prefix", "SAKURA")
-        settings_files = kwargs.get("settings_files", ["settings.yaml"])
-        load_dotenv = kwargs.get("load_dotenv", False)
-        disable_uvloop = kwargs.get("disable_uvloop", False)
+        envvar_prefix = kwargs.get("envvar_prefix", os.getenv("ENVVAR_PREFIX", "SAKURA"))
+        settings_files = kwargs.get("settings_files", json.loads(os.getenv("SETTINGS_FILES", '["settings.yaml"]')))
+        disable_uvloop = kwargs.get("disable_uvloop", os.getenv("DISABLE_UVLOOP", "False").lower() == "true")
 
         if not disable_uvloop:
             import uvloop
@@ -38,7 +41,7 @@ class Microservice(type):
         settings = Dynaconf(
             envvar_prefix=envvar_prefix,
             settings_files=settings_files,
-            load_dotenv=load_dotenv,
+            load_dotenv=True,
         )
 
         settings = Settings.from_dynaconf(settings)
@@ -64,7 +67,7 @@ class Microservice(type):
 
     def __new__(cls, name, bases, attrs, **kwargs):  # noqa: ARG003
         if not cls._instance:
-            cls._instance = super().__new__(cls, name, bases, attrs)
+            cls._instance = super().__new__(cls, name, bases, attrs)()
             DynamicSelfFunc._instance = cls._instance
         loop = asyncio.get_event_loop()
 

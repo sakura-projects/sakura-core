@@ -42,7 +42,7 @@ class FastAPIProvider(Provider):
         for method in ["get", "post", "put", "delete"]:
             self.app.__setattr__(method, deco(self.app.__getattribute__(method)))
 
-    def setup(self) -> typing.Coroutine:
+    def __setup(self) -> typing.Coroutine:
         # TODO: make sure that Config is running on the same event loop as the other services
         config = Config(
             self.app,
@@ -64,8 +64,8 @@ class FastAPIProvider(Provider):
 
         return self.server.serve()
 
-    async def teardown(self):
+    async def __teardown(self):
         self.server.handle_exit(sig=signal.SIGINT, frame=None)
 
-    def get_dependency(self) -> Any:
+    def __get_dependency(self) -> Any:
         return self.app
