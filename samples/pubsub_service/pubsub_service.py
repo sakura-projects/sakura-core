@@ -13,7 +13,7 @@ class Service(metaclass=Microservice, settings_files=["samples/pubsub_service/se
     config: dict
 
     def hello(self):
-        logger.info('hellloo')
+        logger.info("hellloo")
 
     @once
     async def run(self):

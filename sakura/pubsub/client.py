@@ -7,15 +7,15 @@ class PubSubClient:
     _event_store: dict[str, Callable] = {}
 
     @abstractmethod
-    def __setup(self):
+    def _setup(self):
         raise NotImplementedError
 
     @abstractmethod
-    def __start(self):
+    def _start(self):
         raise NotImplementedError
 
     @abstractmethod
-    async def __teardown(self):
+    async def _teardown(self):
         raise NotImplementedError
 
     def subscribe(self, subscriber_id: str) -> Callable:

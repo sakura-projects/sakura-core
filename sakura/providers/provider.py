@@ -3,12 +3,12 @@ from abc import abstractmethod
 
 
 class Provider:
-    def __setup(self) -> typing.Coroutine:
+    def _setup(self) -> typing.Coroutine:
         pass
 
-    async def __teardown(self):
+    async def _teardown(self):
         pass
 
     @abstractmethod
-    def __get_dependency(self) -> typing.Any:
+    def _get_dependency(self) -> typing.Any:
         raise NotImplementedError
