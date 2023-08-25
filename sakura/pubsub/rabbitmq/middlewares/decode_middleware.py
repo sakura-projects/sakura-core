@@ -2,7 +2,7 @@ import logging
 from typing import Callable
 
 from sakura.decoders.json_decoder import JSONDecoder
-from sakura.pubsub.rabbitmq.middlewares import Middleware
+from sakura.pubsub.middlewares import Middleware
 
 logger = logging.getLogger(__name__)
 

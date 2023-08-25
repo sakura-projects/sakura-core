@@ -21,11 +21,11 @@ class RabbitMQPubSubClient(PubSubClient):
         self.__rabbitmq_client = RabbitMQClient(RabbitMQClientSettings.from_dynaconf(raw_settings=settings.params))
         super().__init__()
 
-    def __setup(self):
+    def _setup(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.__rabbitmq_client.setup())
 
-    def __start(self) -> list[Coroutine]:
+    def _start(self) -> list[Coroutine]:
         tasks: list[Coroutine] = []
 
         for subscriber_id, func in self._event_store.items():
@@ -45,6 +45,6 @@ class RabbitMQPubSubClient(PubSubClient):
 
         return tasks
 
-    async def __teardown(self):
+    async def _teardown(self):
         for subscriber_id, subscriber in self.__running_subscribers.items():
             subscriber.should_exit = True

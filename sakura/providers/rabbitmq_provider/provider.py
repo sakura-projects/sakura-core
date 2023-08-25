@@ -1,36 +1,32 @@
-import functools
 import logging
-import signal
-import typing
-from typing import Any, Optional
 
-import fastapi
 import pydantic
-import uvicorn
-from uvicorn import Config, Server
 
-from sakura.logging.loguru import InterceptHandler
-from sakura.providers import Provider
-from sakura.settings import SakuraBaseSettings
-from sakura.utils.decorators import DynamicSelfFunc
+from sakura.providers.provider import Provider
+from sakura.providers.rabbitmq_provider.rabbitmq_client.client import RabbitMQClient
+from sakura.providers.rabbitmq_provider.rabbitmq_client.types import Exchange, Queue
+from sakura.settings.settings import SakuraBaseSettings
 
 logger = logging.getLogger(__name__)
 
 
-class FastAPIProvider(Provider):
-    server: Optional[Server] = None
-
+class RabbitMQProvider(Provider):
     class Settings(SakuraBaseSettings):
-        extra: dict = pydantic.Field(default_factory=dict)
-        port: int = "8080"
-        title: str = "FastAPI"
+        class DeclareOptions(pydantic.BaseModel):
+            queues: list[Queue]
+            exchanges: list[Exchange]
+
+        uri: str = "amqp://localhost:5672"
+        encoding: str = "utf-8"
+        content_type: str = "application/json"
+        virtual_host: str = "/"
+
+        declare: DeclareOptions = pydantic.Field(default_factory=DeclareOptions)
+
 
     def __init__(self, settings: Settings):
         self.settings = settings
-        self.app = fastapi.FastAPI(
-            title=settings.title,
-            **settings.extra,
-        )
+        self.__rabbitmq_client = RabbitMQClient()
 
         def deco(func):
             def wildcard_method(*args, **kwargs):
@@ -42,7 +38,7 @@ class FastAPIProvider(Provider):
         for method in ["get", "post", "put", "delete"]:
             self.app.__setattr__(method, deco(self.app.__getattribute__(method)))
 
-    def __setup(self) -> typing.Coroutine:
+    def _setup(self) -> typing.Coroutine:
         # TODO: make sure that Config is running on the same event loop as the other services
         config = Config(
             self.app,
@@ -64,8 +60,8 @@ class FastAPIProvider(Provider):
 
         return self.server.serve()
 
-    async def __teardown(self):
+    async def _teardown(self):
         self.server.handle_exit(sig=signal.SIGINT, frame=None)
 
-    def __get_dependency(self) -> Any:
+    def _get_dependency(self) -> Any:
         return self.app

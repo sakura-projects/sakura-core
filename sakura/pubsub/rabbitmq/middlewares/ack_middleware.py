@@ -3,7 +3,7 @@ from typing import Callable
 
 from aio_pika.abc import AbstractIncomingMessage
 
-from sakura.pubsub.rabbitmq.middlewares import Middleware
+from sakura.pubsub.middlewares import Middleware
 
 logger = logging.getLogger(__name__)
 

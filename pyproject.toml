@@ -7,18 +7,25 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
+loguru = "^0.7.0"
+dynaconf = "^3.2.1"
+asyncer = "^0.0.2"
+uvloop = { version = "^0.17.0", optional = true }
+python-dotenv = "^1.0.0"
+
+[tool.poetry.extras]
+uvloop = ["uvloop"]
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
 pre-commit = "^3.3.3"
 
+[tool.poetry.group.sakura-fastapi-provider-dev.dependencies]
+fastapi = "<0.100.0"
+uvicorn = "^0.23.2"
 
-[tool.poetry.group.sakura.dependencies]
-sakura-core = {path = "sakura"}
-
-
-[tool.poetry.group.sakura-fastapi-provider.dependencies]
-sakura-fastapi-provider = {path = "sakura-fastapi-provider"}
+[tool.poetry.group.sakura-rabbitmq-dev.dependencies]
+aio-pika = "^9.2.2"
 
 [build-system]
 requires = ["poetry-core"]
