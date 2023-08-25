@@ -2,8 +2,8 @@ import asyncio
 from collections.abc import Coroutine
 
 from sakura.exceptions import SubscriberNotFoundError
+from sakura.providers.rabbitmq_provider.provider import RabbitMQProvider
 from sakura.pubsub.client import PubSubClient
-from sakura.pubsub.rabbitmq.rabbitmq_client import RabbitMQClient, RabbitMQClientSettings
 from sakura.pubsub.rabbitmq.settings import Settings
 from sakura.pubsub.rabbitmq.subscriber import RabbitMQSubscriber
 
@@ -13,17 +13,15 @@ class RabbitMQPubSubClient(PubSubClient):
     __running_subscribers: dict[str, RabbitMQSubscriber] = {}
 
     def __init__(self, settings: Settings):
-        self.__settings = settings
         self.serialization = settings.serialization
         self.subscribers = settings.subscribers
         self.publishers = settings.publishers
 
-        self.__rabbitmq_client = RabbitMQClient(RabbitMQClientSettings.from_dynaconf(raw_settings=settings.params))
-        super().__init__()
+        self.__rabbitmq_provider = RabbitMQProvider(settings=settings.params)
 
     def _setup(self):
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.__rabbitmq_client.setup())
+        loop.run_until_complete(self.__rabbitmq_provider._setup())
 
     def _start(self) -> list[Coroutine]:
         tasks: list[Coroutine] = []
@@ -34,7 +32,7 @@ class RabbitMQPubSubClient(PubSubClient):
 
             subscriber = RabbitMQSubscriber(
                 settings=self.subscribers[subscriber_id],
-                client=self.__rabbitmq_client,
+                client=self.__rabbitmq_provider._get_dependency(),
                 func=func,
                 subscriber_id=subscriber_id,
             )
@@ -46,5 +44,5 @@ class RabbitMQPubSubClient(PubSubClient):
         return tasks
 
     async def _teardown(self):
-        for subscriber_id, subscriber in self.__running_subscribers.items():
+        for subscriber in self.__running_subscribers.values():
             subscriber.should_exit = True

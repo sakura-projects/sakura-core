@@ -1,3 +1,4 @@
+from sakura.providers.rabbitmq_provider.provider import RabbitMQProviderSettings
 from sakura.pubsub.settings import Settings as PubSubSettings
 from sakura.settings import SakuraBaseSettings
 
@@ -15,6 +16,6 @@ class PublisherSettings(SakuraBaseSettings):
 
 
 class Settings(PubSubSettings):
-    params: dict
+    params: RabbitMQProviderSettings
     subscribers: dict[str, SubscriberSettings]
     publishers: dict[str, PublisherSettings]

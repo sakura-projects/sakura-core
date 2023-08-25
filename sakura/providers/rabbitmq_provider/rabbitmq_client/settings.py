@@ -1,6 +1,6 @@
 import pydantic
 
-from sakura.pubsub.rabbitmq.rabbitmq_client.types import Exchange, Queue
+from sakura.providers.rabbitmq_provider.rabbitmq_client.types import Exchange, Queue
 from sakura.settings import SakuraBaseSettings
 
 

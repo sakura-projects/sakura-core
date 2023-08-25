@@ -14,7 +14,7 @@ from aio_pika.abc import (
 )
 from aio_pika.pool import Pool
 
-from sakura.pubsub.rabbitmq.rabbitmq_client.types import Exchange, Queue
+from sakura.providers.rabbitmq_provider.rabbitmq_client.types import Exchange, Queue
 
 logger = getLogger(__name__)
 
