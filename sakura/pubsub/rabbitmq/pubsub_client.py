@@ -26,15 +26,16 @@ class RabbitMQPubSubClient(PubSubClient):
     def _start(self) -> list[Coroutine]:
         tasks: list[Coroutine] = []
 
-        for subscriber_id, func in self._event_store.items():
+        for subscriber_id, (func, middlewares) in self._event_store.items():
             if subscriber_id not in self.subscribers:
                 raise SubscriberNotFoundError
 
             subscriber = RabbitMQSubscriber(
+                subscriber_id=subscriber_id,
+                func=func,
+                middlewares=middlewares,
                 settings=self.subscribers[subscriber_id],
                 client=self.__rabbitmq_provider._get_dependency(),
-                func=func,
-                subscriber_id=subscriber_id,
             )
 
             self.__running_subscribers[subscriber_id] = subscriber

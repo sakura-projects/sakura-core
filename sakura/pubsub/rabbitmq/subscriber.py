@@ -3,6 +3,7 @@ import logging
 from typing import Callable, Optional
 
 from sakura.providers.rabbitmq_provider.rabbitmq_client import RabbitMQClient
+from sakura.pubsub.middlewares import Middleware
 from sakura.pubsub.middlewares.asyncify_middleware import AsyncifyMiddleware
 from sakura.pubsub.middlewares.dynamic_self_func_middleware import DynamicSelfFuncMiddleware
 from sakura.pubsub.rabbitmq.middlewares.ack_middleware import AckMiddleware
@@ -16,10 +17,17 @@ logger = logging.getLogger(__name__)
 class RabbitMQSubscriber(Subscriber):
     should_exit: bool = False
 
-    def __init__(self, settings: SubscriberSettings, client: RabbitMQClient, func: Callable, subscriber_id: str):
+    def __init__(  # noqa: PLR0913
+        self, 
+        subscriber_id: str, 
+        func: Callable, 
+        middlewares: list[Middleware], 
+        settings: SubscriberSettings, 
+        client: RabbitMQClient,
+    ):
+        super().__init__(subscriber_id=subscriber_id, func=func, middlewares=middlewares)
+
         self.client = client
-        self.func = func
-        self.subscriber_id = subscriber_id
         self.queue = settings.queue
         self.auto_ack = settings.auto_ack
         self.prefetch_count = settings.prefetch_count
@@ -48,10 +56,11 @@ class RabbitMQSubscriber(Subscriber):
             DynamicSelfFuncMiddleware(),
             AsyncifyMiddleware(),
             DecodeMiddleware(),
+            *self.user_middlewares,
             AckMiddleware(auto_ack=self.auto_ack),
         ]
 
-        for middleware in middlewares:
+        for middleware in reversed(middlewares):
             func = middleware(func)
 
         return func
