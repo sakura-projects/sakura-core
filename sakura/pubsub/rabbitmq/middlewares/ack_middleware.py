@@ -1,9 +1,10 @@
 import logging
-from typing import Callable
-
-from aio_pika.abc import AbstractIncomingMessage
+from typing import TYPE_CHECKING, Callable
 
 from sakura.pubsub.middlewares import Middleware
+
+if TYPE_CHECKING:
+    from aio_pika.abc import AbstractIncomingMessage
 
 logger = logging.getLogger(__name__)
 
@@ -13,11 +14,13 @@ class AckMiddleware(Middleware):
         self.auto_ack = auto_ack
 
     def __call__(self, func: Callable) -> Callable:
-        async def wrapper(msg: AbstractIncomingMessage):
-            result = await func(msg)
-            if self.auto_ack:
-                await msg.ack()
+        async def wrapper(*args, **kwargs):
+            res = await func(*args, **kwargs)
 
-            return result
+            msg: AbstractIncomingMessage = kwargs.get("__msg")
+
+            if self.auto_ack:
+                logger.debug(f"Acknowledged {msg.message_id}")
+                await msg.ack()
 
         return wrapper

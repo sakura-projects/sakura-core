@@ -54,10 +54,10 @@ class RabbitMQSubscriber(Subscriber):
     def build_callback(self, func: Callable) -> Callable:
         middlewares = [
             DynamicSelfFuncMiddleware(),
-            AsyncifyMiddleware(),
             DecodeMiddleware(),
-            *self.user_middlewares,
             AckMiddleware(auto_ack=self.auto_ack),
+            *self.user_middlewares,
+            AsyncifyMiddleware(),
         ]
 
         for middleware in reversed(middlewares):

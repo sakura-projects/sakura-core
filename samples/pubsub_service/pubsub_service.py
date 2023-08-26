@@ -34,3 +34,5 @@ class Service(metaclass=Microservice, settings_files=["samples/pubsub_service/se
     @pubsub["client1"].subscribe("subscriber1", middlewares=[UserMiddleware()])
     def get_from_rabbit(self, *args, **kwargs):  # noqa: ARG002
         logger.info("From rabbit...")
+
+        return "hello"

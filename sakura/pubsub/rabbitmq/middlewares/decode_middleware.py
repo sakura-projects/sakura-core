@@ -24,6 +24,6 @@ class DecodeMiddleware(Middleware):
 
             request_body = DecodeMiddleware.decoders.get(msg.content_type).decode(msg.body.decode(msg.content_encoding))
 
-            return await func(request_body)
+            return await func(request_body, __msg=msg)
 
         return wrapper
