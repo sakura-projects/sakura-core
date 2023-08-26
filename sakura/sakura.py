@@ -105,4 +105,4 @@ class Sakura:
             await provider._teardown()
 
         for pubsub_client in self.__pubsub.values():
-            await pubsub_client.__teardown()
+            await pubsub_client._teardown()

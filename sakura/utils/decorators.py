@@ -1,5 +1,6 @@
 import functools
 import inspect
+import types
 from typing import Any, Callable
 
 
@@ -36,17 +37,17 @@ class DynamicSelfFunc:
 
         @functools.wraps(self.func)
         def sync_decorator(*deco_args, **deco_kwargs):
-            if len(old_signature.parameters) == len(deco_args + tuple(deco_kwargs.values())):
+            if "self" not in old_signature.parameters:
                 return self.func(*deco_args, **deco_kwargs)
 
-            return self.func(self._instance, *deco_args, **deco_kwargs)
+            return self.func(self=self._instance, *deco_args, **deco_kwargs)
 
         @functools.wraps(self.func)
         async def async_decorator(*deco_args, **deco_kwargs):
-            if len(old_signature.parameters) == len(deco_args + tuple(deco_kwargs.values())):
+            if "self" not in old_signature.parameters:
                 return await self.func(*deco_args, **deco_kwargs)
 
-            return await self.func(self._instance, *deco_args, **deco_kwargs)
+            return await self.func(self=self._instance, *deco_args, **deco_kwargs)
 
         decorator = async_decorator if inspect.iscoroutinefunction(self.func) else sync_decorator
 

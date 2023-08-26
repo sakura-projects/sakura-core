@@ -1,4 +1,6 @@
+import functools
 import logging
+import typing
 from typing import Callable
 
 from sakura.microservice import Microservice
@@ -10,9 +12,9 @@ logger = logging.getLogger(__name__)
 
 class UserMiddleware(Middleware):
     def __call__(self, func: Callable) -> Callable:
+        @functools.wraps(func)
         async def wrapper(*args, **kwargs):
             logger.info("from user middleware")
-
             return await func(*args, **kwargs)
 
         return wrapper
@@ -32,7 +34,7 @@ class Service(metaclass=Microservice, settings_files=["samples/pubsub_service/se
         self.hello()
 
     @pubsub["client1"].subscribe("subscriber1", middlewares=[UserMiddleware()])
-    def get_from_rabbit(self, *args, **kwargs):  # noqa: ARG002
+    def get_from_rabbit(self, foo: str):  # noqa: ARG002
         logger.info("From rabbit...")
 
         return "hello"

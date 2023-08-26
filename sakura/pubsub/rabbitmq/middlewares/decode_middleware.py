@@ -1,5 +1,8 @@
+import functools
 import logging
 from typing import Callable
+
+from aio_pika.abc import AbstractIncomingMessage
 
 from sakura.decoders.json_decoder import JSONDecoder
 from sakura.pubsub.middlewares import Middleware
@@ -16,7 +19,8 @@ class DecodeMiddleware(Middleware):
     }
 
     def __call__(self, func: Callable) -> Callable:
-        async def wrapper(msg):
+        @functools.wraps(func)
+        async def wrapper(msg: AbstractIncomingMessage):
             if not msg.content_type or not msg.content_encoding:
                 logger.warning(f"Missing content_type or content_encoding in {msg.message_id=}, assuming defaults")
                 msg.content_type = DecodeMiddleware.DEFAULT_CONTENT_TYPE
@@ -24,6 +28,6 @@ class DecodeMiddleware(Middleware):
 
             request_body = DecodeMiddleware.decoders.get(msg.content_type).decode(msg.body.decode(msg.content_encoding))
 
-            return await func(request_body, __msg=msg)
+            return await func(**request_body, _msg=msg)
 
         return wrapper

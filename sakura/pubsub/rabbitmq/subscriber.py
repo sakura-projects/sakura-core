@@ -3,11 +3,14 @@ import logging
 from typing import Callable, Optional
 
 from sakura.providers.rabbitmq_provider.rabbitmq_client import RabbitMQClient
-from sakura.pubsub.middlewares import Middleware
-from sakura.pubsub.middlewares.asyncify_middleware import AsyncifyMiddleware
-from sakura.pubsub.middlewares.dynamic_self_func_middleware import DynamicSelfFuncMiddleware
-from sakura.pubsub.rabbitmq.middlewares.ack_middleware import AckMiddleware
+from sakura.pubsub.middlewares import (
+    AsyncifyMiddleware,
+    DynamicSelfFuncMiddleware,
+    ExceptionHandlerMiddleware,
+    Middleware,
+)
 from sakura.pubsub.rabbitmq.middlewares.decode_middleware import DecodeMiddleware
+from sakura.pubsub.rabbitmq.middlewares.execution_middleware import ExecutionMiddleware
 from sakura.pubsub.rabbitmq.settings import SubscriberSettings
 from sakura.pubsub.subscriber import Subscriber
 
@@ -53,10 +56,11 @@ class RabbitMQSubscriber(Subscriber):
 
     def build_callback(self, func: Callable) -> Callable:
         middlewares = [
-            DynamicSelfFuncMiddleware(),
+            ExceptionHandlerMiddleware(),
             DecodeMiddleware(),
-            AckMiddleware(auto_ack=self.auto_ack),
             *self.user_middlewares,
+            ExecutionMiddleware(auto_ack=self.auto_ack),
+            DynamicSelfFuncMiddleware(),
             AsyncifyMiddleware(),
         ]
 
