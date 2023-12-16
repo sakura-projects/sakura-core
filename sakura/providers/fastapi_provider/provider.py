@@ -18,7 +18,7 @@ try:
     import fastapi
     import uvicorn
 except ImportError as e:
-    logger.error(f'Make sure that http dependencies are installed.', exc_info=e)
+    logger.error("Make sure that http dependencies are installed.", exc_info=e)
     raise e
 
 

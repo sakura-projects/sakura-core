@@ -1,0 +1,62 @@
+config:
+  my_settings: blabla
+
+pubsub:
+  client1:
+    type: RabbitMQPubSubClient
+    serialization: JSONSerializer
+    params:
+      uri: amqp://guest:guest@localhost:5672
+      encoding: utf-8
+      virtual_host: /
+      declare:
+        queues:
+          - name: queue.input
+            durable: true
+            arguments:
+              x-dead-letter-exchange: rabbit_config.deadletter_exchange
+              x-dead-letter-routing-key: rabbit_config.deadletter_queue_name
+              x-queue-type: quorum
+              x-delivery-limit: 3
+        exchanges:
+          - name: ""
+            durable: true
+    subscribers:
+      subscriber1:
+        queue: queue.input
+        auto_ack: true
+        prefetch_count: 5
+        retry_interval: 5
+    publishers:
+      publisher1:
+        exchange: ""
+        routing_key: routing1
+
+  client2:
+    type: KafkaPubSub
+    serialization: AvroSerializer
+    params:
+      brokers:
+        - 'localhost:9092'
+      declare:
+        topics:
+          - name: topic.output
+            partitions: 6
+            partition_strategy: bla
+          - name: topic.input
+            partitions: 6
+            partition_strategy: bla
+    subscribers:
+      subscriber1:
+        topic: topic.input
+        consumer_group: watson
+    publishers:
+      publisher1:
+        topic: topic.output
+
+providers: []
+
+loggers:
+  Loguru:
+    serialize: False
+    handlers: []

@@ -67,5 +67,5 @@ select = [
 ]
 
 [tool.ruff.per-file-ignores]
-"samples/basic_service/basic_service.py" = ["F821"]
+"samples/basic_service/basic_service.py" = ["F821", "INP001"]
 "*/test_*.py" = ["S101"]
