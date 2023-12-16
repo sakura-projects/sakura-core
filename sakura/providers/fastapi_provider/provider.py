@@ -4,10 +4,7 @@ import signal
 import typing
 from typing import Any, Optional
 
-import fastapi
 import pydantic
-import uvicorn
-from uvicorn import Config, Server
 
 from sakura.logging.loguru import InterceptHandler
 from sakura.providers import Provider
@@ -17,8 +14,16 @@ from sakura.utils.decorators import DynamicSelfFunc
 logger = logging.getLogger(__name__)
 
 
+try:
+    import fastapi
+    import uvicorn
+except ImportError as e:
+    logger.error(f'Make sure that http dependencies are installed.', exc_info=e)
+    raise e
+
+
 class FastAPIProvider(Provider):
-    server: Optional[Server] = None
+    server: Optional[uvicorn.Server] = None
 
     class Settings(SakuraBaseSettings):
         extra: dict = pydantic.Field(default_factory=dict)
@@ -44,13 +49,13 @@ class FastAPIProvider(Provider):
 
     def setup(self) -> typing.Coroutine:
         # TODO: make sure that Config is running on the same event loop as the other services
-        config = Config(
+        config = uvicorn.Config(
             self.app,
             host="0.0.0.0",  # noqa: S104
             port=self.settings.port,
         )
 
-        self.server = Server(config=config)
+        self.server = uvicorn.Server(config=config)
         logging.getLogger("uvicorn").removeHandler(logging.getLogger("uvicorn").handlers[0])
         logging.getLogger("uvicorn.access").removeHandler(logging.getLogger("uvicorn.access").handlers[0])
 

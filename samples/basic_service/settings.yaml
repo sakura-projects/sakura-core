@@ -1,15 +1,11 @@
-config:
-  queue:
-    name: hello
-  exchange:
-    name: main
+config: {}
 
 providers:
   http:
     type: FastAPIProvider
     params:
       port: 8000
-      title: basic_service
+      title: Basic Service
 
 loggers:
   Loguru:
